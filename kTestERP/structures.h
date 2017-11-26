@@ -1,7 +1,8 @@
 #pragma once
 
 #include <string>
-#include <unordered_set>
+#include <unordered_map>
+#include <list>
 #include <assert.h>
 
 enum class EmployerPosition {
@@ -23,39 +24,23 @@ enum class Job {
     eCleaning,
 };
 
-
-
-//template<typename T, typename T::Val>
 struct EmployerBase {
     const std::string m_name;
     EmployerBase(std::string name) noexcept:
         m_name(name) {}
+    virtual ~EmployerBase(){}
     bool canDo(Job job);
 
-protected:
-    bool isPrograming() const { return false; }
-    bool isProjecing() const { return false; }
-    bool isTranslating() const { return false; }
-    bool isTesting() const { return false; }
-    bool isPlainingTest() const { return false; }
-    bool isPaySallory() const { return false; }
-    bool isReporting() const { return false; }
+//protected:
+//    bool isPrograming() const { return false; }
+//    bool isProjecing() const { return false; }
+//    bool isTranslating() const { return false; }
+//    bool isTesting() const { return false; }
+//    bool isPlainingTest() const { return false; }
+//    bool isPaySallory() const { return false; }
+//    bool isReporting() const { return false; }
 };
 
-bool EmployerBase::canDo(Job job)
-{
-    switch (job)
-    {
-    case Job::eProgramming:
-        return isPrograming();
-    case Job::eVacation:
-    case Job::eCleaning:
-        return true;
-    default:
-        assert(false);
-        return false;
-    }
-}
 
 
 //template<typename T>
@@ -79,14 +64,17 @@ bool EmployerBase::canDo(Job job)
 //    bool isTranslating() const { return true; }
 //};
 
-using Employers = std::unordered_set<EmployerBase>;
+using EmployersMap = std::unordered_map<EmployerPosition, EmployerBase>;
+using EmployersList = std::list<EmployerBase>;
 
 class Departament {
 public:
+    Departament(std::string name) noexcept :
+        m_name(name) {}
     bool addEmployer(const EmployerBase& employer);
-    Employers&& getEmployers(EmployerPosition position) const;
+    EmployersList&& getEmployers(EmployerPosition position) const;
 
 private:
     const std::string m_name;
-    Employers m_employers;
+    EmployersMap m_employers;
 };
