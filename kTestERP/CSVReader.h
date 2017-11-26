@@ -24,7 +24,7 @@ public:
 
 private:
     void readFolder(const std::string& path) throw(CSVReaderException);
-
+	void readFile(const std::string& fileName) throw(CSVReaderException);
 private:
     bool m_verbose;
     fs::path m_path;
