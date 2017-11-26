@@ -2,6 +2,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <list>
 #include <assert.h>
 
@@ -73,8 +74,18 @@ public:
         m_name(name) {}
     bool addEmployer(const EmployerBase& employer);
     EmployersList&& getEmployers(EmployerPosition position) const;
-
+    const std::string& name() const { return m_name;  }
 private:
     const std::string m_name;
     EmployersMap m_employers;
 };
+
+struct DepartamentHash
+{
+    size_t operator()(const Departament& dep) const
+    {
+        return dep.name().length();
+    }
+};
+
+using Departaments = std::unordered_set<Departament, DepartamentHash>;
