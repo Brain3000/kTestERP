@@ -1,19 +1,7 @@
 #include "stdafx.h"
+
 #include "structures.h"
 
-
-//bool EmployerBase::canDo(Job job)
-//{
-//    switch (job)
-//    {
-//    case Job::eVacation:
-//    case Job::eCleaning:
-//        return true;
-//    default:
-//        assert(false);
-//        return false;
-//    }
-//}
 
 IEmployerPtr EmployerFactory::createEmployer(const std::string& name,
                                            EmployerPosition pos) noexcept {
@@ -31,6 +19,7 @@ IEmployerPtr EmployerFactory::createEmployer(const std::string& name,
         assert(false);
         break;
     }
+    return nullptr;
 }
 
 

@@ -10,7 +10,7 @@ const char kCSVExtension[] = ".csv";
 const std::string kNameId = "Фамилия";
 const std::string kPositionId = "Специальность";
 
-CSVReader::CSVReader(const std::string path, bool verbose) throw(CSVReaderException):
+CSVReader::CSVReader(const std::string path, bool verbose) :
     m_verbose(verbose), m_sep(";") {
     if (m_verbose) {
         std::cout << "Указан каталог с входными файлами: "
@@ -20,7 +20,7 @@ CSVReader::CSVReader(const std::string path, bool verbose) throw(CSVReaderExcept
     readFolder(path);
 }
 
-void CSVReader::readFolder(const std::string& path) throw(CSVReaderException) {
+void CSVReader::readFolder(const std::string& path) {
     try {
         m_path = path;
 
@@ -50,7 +50,7 @@ void CSVReader::readFolder(const std::string& path) throw(CSVReaderException) {
     }
 }
 
-void CSVReader::readFile(const std::string& fileName) throw(CSVReaderException) {
+void CSVReader::readFile(const std::string& fileName) {
 	if (m_verbose) {
 		std::cout << "Попытка прочитать информацию из файла: '"
 			<< fileName << "'\n";
