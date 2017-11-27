@@ -1,12 +1,10 @@
-﻿#pragma once
+#pragma once
 
 #include <string>
 #include <memory>
 #include <unordered_set>
 #include <unordered_map>
 #include <list>
-
-#include "Cnv.h"
 
 enum class EmployerPosition {
     eUnknown,
@@ -36,7 +34,7 @@ public:
 public:    
     virtual ~IEmployer() {};
 	virtual bool canJob(Job job) const noexcept = 0;
-    virtual const std::wstring& name() const noexcept = 0;
+    virtual const std::string& name() const noexcept = 0;
     virtual EmployerPosition position() const noexcept = 0;
     virtual const Jobs& jobs() const noexcept = 0;
 };
@@ -56,15 +54,15 @@ class Employer : public IEmployer
 {
 public:
 	virtual bool canJob(Job job) const noexcept;
-    virtual const std::wstring& name() const noexcept;
+    virtual const std::string& name() const noexcept;
     virtual EmployerPosition position() const noexcept;
     virtual const Jobs& jobs() const noexcept;
 
 protected:
-    Employer(const std::wstring& name, EmployerPosition position) noexcept;
+    Employer(const std::string& name, EmployerPosition position) noexcept;
 
 private:
-    const std::wstring m_name;
+    const std::string m_name;
     EmployerPosition m_position;
 
 protected:
@@ -75,7 +73,7 @@ protected:
 template<EmployerPosition P, Job... jobs>
 class EmployerImpl : public Employer {
 public:
-    EmployerImpl(const std::wstring& name) noexcept :
+    EmployerImpl(const std::string& name) noexcept :
     Employer(name, P) {
         Jobs j = { { jobs... } };
         m_jobs.insert(j.begin(), j.end());
@@ -96,10 +94,10 @@ class EmployerFactory
 public:
     EmployerFactory(bool verbose) noexcept : m_verbose(verbose)
         {}
-    IEmployerPtr createEmployer(const std::wstring& name,
-                                const std::wstring& positionAsText);
+    IEmployerPtr createEmployer(const std::string& name,
+                                const std::string& positionAsText);
 private:
-    EmployerPosition textToPosition(const std::wstring& positionAsText);
+    EmployerPosition textToPosition(const std::string& positionAsText);
 
 private:
     bool m_verbose;

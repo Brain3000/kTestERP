@@ -1,11 +1,11 @@
-п»ї#include "stdafx.h"
+#include "stdafx.h"
 
 #include <iostream>
 
 #include "Employer.h"
 
 
-Employer::Employer(const std::wstring& name,
+Employer::Employer(const std::string& name,
                    EmployerPosition position) noexcept :
     m_name(name), m_position(position) {
     m_jobs = { Job::eVacation, Job::eCleaning };
@@ -15,7 +15,7 @@ bool Employer::canJob(Job job) const noexcept {
     return (m_jobs.find(job) != m_jobs.end());
 }
 
-const std::wstring& Employer::name() const noexcept {
+const std::string& Employer::name() const noexcept {
     return m_name;
 }
 EmployerPosition Employer::position() const noexcept {
@@ -26,8 +26,8 @@ const IEmployer::Jobs& Employer::jobs() const noexcept {
 }
 
 
-IEmployerPtr EmployerFactory::createEmployer(const std::wstring& name,
-                                             const std::wstring& positionAsText) {
+IEmployerPtr EmployerFactory::createEmployer(const std::string& name,
+                                             const std::string& positionAsText) {
     if (!name.empty()) {
         EmployerPosition pos = textToPosition(positionAsText);
         switch (pos) {
@@ -41,7 +41,7 @@ IEmployerPtr EmployerFactory::createEmployer(const std::wstring& name,
             return std::make_shared<Accountant>(name);
         default:
             if (m_verbose) {
-                std::wcout << L"РќРµРёР·РІРµСЃС‚РЅРѕРµ РЅР°Р·РІР°РЅРёРµ СЃРїРµС†РёР°Р»СЊРЅРѕСЃС‚Рё: "
+                std::cout << "Неизвестное название специальности: "
                           << positionAsText << std::endl;
             }
             break;
@@ -51,14 +51,14 @@ IEmployerPtr EmployerFactory::createEmployer(const std::wstring& name,
     return nullptr;
 }
 
-EmployerPosition EmployerFactory::textToPosition(const std::wstring& positionAsText)
+EmployerPosition EmployerFactory::textToPosition(const std::string& positionAsText)
 {
-    using EmplPosMap = std::unordered_map<std::wstring, EmployerPosition>;
+    using EmplPosMap = std::unordered_map<std::string, EmployerPosition>;
     static const EmplPosMap emplMap = {
-        { L"Р Р°Р·СЂР°Р±РѕС‚С‡РёРє", EmployerPosition::eProgrammer },
-        { L"РџРёСЃР°С‚РµР»СЊ", EmployerPosition::eWriter },
-        { L"РўРµСЃС‚РµСЂ", EmployerPosition::eTester },
-        { L"РџРёСЃР°С‚РµР»СЊ", EmployerPosition::eAccountant },
+        { "Разработчик", EmployerPosition::eProgrammer },
+        { "Писатель", EmployerPosition::eWriter },
+        { "Тестер", EmployerPosition::eTester },
+        { "Писатель", EmployerPosition::eAccountant },
     };
     EmployerPosition pos = EmployerPosition::eUnknown;
     auto it = emplMap.find(positionAsText);

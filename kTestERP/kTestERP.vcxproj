@@ -151,7 +151,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Cnv.h" />
     <ClInclude Include="CSVReader.h" />
     <ClInclude Include="Employer.h" />
     <ClInclude Include="stdafx.h" />
@@ -159,7 +158,6 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Cnv.cpp" />
     <ClCompile Include="CSVReader.cpp" />
     <ClCompile Include="Employer.cpp" />
     <ClCompile Include="main.cpp" />

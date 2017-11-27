@@ -4,12 +4,13 @@
 #include <iostream>
 #include <fstream>
 #include <iterator>
+#include <codecvt>
 
 #include <boost/system/system_error.hpp>
 
 const char kCSVExtension[] = ".csv";
-const std::wstring kNameId = L"Р¤Р°РјРёР»РёСЏ";
-const std::wstring kPositionId = L"РЎРїРµС†РёР°Р»СЊРЅРѕСЃС‚СЊ";
+const std::string kNameId = "Фамилия";
+const std::string kPositionId = "Специальность";
 
 const CSVReader::IdsMap CSVReader::s_idsMap {
 	{ kNameId, -1 },
@@ -17,10 +18,10 @@ const CSVReader::IdsMap CSVReader::s_idsMap {
 };
 
 CSVReader::CSVReader(const std::string path, bool verbose) :
-    m_verbose(verbose), m_sep(L";") {
+    m_verbose(verbose), m_sep(";") {
     if (m_verbose) {
-        std::wcout << L"РЈРєР°Р·Р°РЅ РєР°С‚Р°Р»РѕРі СЃ РІС…РѕРґРЅС‹РјРё С„Р°Р№Р»Р°РјРё: "
-            << cnv().from_bytes(path) << std::endl;
+        std::cout << "Указан каталог с входными файлами: '"
+                  << path << "'\n";
     }
 
     readFolder(path);
@@ -33,14 +34,14 @@ void CSVReader::readFolder(const std::string& path) {
 		//std::cout << fs::current_path().string() << std::endl;
 
         if (!fs::exists(m_path)) {
-            throw CSVReaderException("РџСѓС‚СЊ '" + m_path.string() + "' РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚");
+            throw CSVReaderException("Путь '" + m_path.string() + "' не существует");
         }
         if (!fs::is_directory(m_path)) {
-            throw CSVReaderException("РџСѓС‚СЊ '" + m_path.string() + " РЅРµ СЏРІР»СЏРµС‚СЃСЏ РєР°С‚Р°Р»РѕРіРѕРј");
+            throw CSVReaderException("Путь '" + m_path.string() + " не является каталогом");
         }
         fs::perms perm = fs::status(m_path).permissions();
         if (!(perm & fs::perms::others_read)) {
-            throw CSVReaderException("РљР°С‚Р°Р»РѕРі '" + m_path.string() + "' РЅРµ РёРјРµРµС‚ РїСЂР°РІ РЅР° С‡С‚РµРЅРёРµ");
+            throw CSVReaderException("Каталог '" + m_path.string() + "' не имеет прав на чтение");
         }
         fs::recursive_directory_iterator end_itr;
         for (fs::recursive_directory_iterator itr(m_path); itr != end_itr; ++itr) {
@@ -59,16 +60,16 @@ void CSVReader::readFolder(const std::string& path) {
 void CSVReader::readFile(const std::string& fileName,
 						 const std::string& depName) {
 	if (m_verbose) {
-		std::cout << "РџРѕРїС‹С‚РєР° РїСЂРѕС‡РёС‚Р°С‚СЊ РёРЅС„РѕСЂРјР°С†РёСЋ РёР· С„Р°Р№Р»Р°: '"
+		std::cout << "Попытка прочитать информацию из файла: '"
 			<< fileName << "'\n";
 	}
-	// Р—Р°РєСЂС‹РІР°С‚СЊ РїРѕС‚РѕРє РЅРµ Р±СѓРґСѓ, Р±Рѕ СЃР°Рј Р·Р°РєСЂРѕРµС‚СЃСЏ РЅР° РґРёСЃС‚СЂСѓРєС†РёРё
-	std::wifstream iStream(fileName);
-    iStream.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
-    std::wstring buf;
+	// Закрывать поток не буду, бо сам закроется на диструкции
+	std::ifstream iStream(fileName);
+    iStream.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<char>));
+    std::string buf;
 	if (!iStream.good()) {
 		if (m_verbose) {
-			std::cout << "РќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ С„Р°Р№Р» '" << fileName << "'\n";
+			std::cout << "Не удалось открыть файл '" << fileName << "'\n";
 		}
 		return;
 	}
@@ -78,7 +79,7 @@ void CSVReader::readFile(const std::string& fileName,
 	int maxIdx(-1), strIdx(0);
 	while (getline(iStream, buf)) {
 		++strIdx;
-		// РќР°РґРѕ РѕРїСЂРµРґРµР»РёС‚СЊ РёРЅРґРµРєСЃС‹ РЅСѓР¶РЅС‹С… РїРѕР»РµР№ (РµСЃР»Рё Р±СѓРґСѓС‚)
+		// Надо определить индексы нужных полей (если будут)
 		if (idsMap.empty()) {
 			idsMap = getIdsMap(buf, fileName);
 			if (idsMap.empty()) {
@@ -90,32 +91,32 @@ void CSVReader::readFile(const std::string& fileName,
 									  { return p1.second < p2.second; })->second;
 			continue;
 		}
-		// РРЅРґРµРєСЃС‹ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂРѕРІ РїРѕР»СѓС‡РµРЅС‹, РЅР°С‡РёРЅР°РµРј РёР·РІР»РµРєР°С‚СЊ РґР°РЅРЅС‹Рµ
+		// Индексы идентификаторов получены, начинаем извлекать данные
 		Tokenizer tokenizer(buf, m_sep);
 		if (std::distance(tokenizer.begin(), tokenizer.end()) <= maxIdx) {
 			if (m_verbose) {
-				std::cout << "Р’ СЃС‚СЂРѕРєРµ " << strIdx << " РјРµРЅРµРµ "
-						  << maxIdx << " СЌР»РµРјРµРЅС‚РѕРІ, РїРѕСЌС‚РѕРјСѓ РёР· РЅРµС‘ РЅРµР»СЊР·СЏ РёР·РІР»РµС‡СЊ "
-								       "РґР°РЅРЅС‹Рµ Рѕ СЃРѕС‚СЂСѓРґРЅРёРєРµ";
+				std::cout << "В строке " << strIdx << " менее "
+						  << maxIdx << " элементов, поэтому из неё нельзя извлечь "
+								       "данные о сотруднике";
 			}
             continue;
 		}
-        const std::wstring name = *(std::next(tokenizer.begin(), idsMap[kNameId]));
-        const std::wstring posAsText = *(std::next(tokenizer.begin(), idsMap[kPositionId]));
+        const std::string name = *(std::next(tokenizer.begin(), idsMap[kNameId]));
+        const std::string posAsText = *(std::next(tokenizer.begin(), idsMap[kPositionId]));
         if (m_verbose) {
-            std::wcout << L"РџРѕРїС‹С‚РєР° Р·Р°РіСЂСѓР·РёС‚СЊ РґР°РЅРЅС‹Рµ СЃРѕС‚СЂСѓРґРЅРёРєР° РёР· СЃС‚СЂРѕРєРё "
-                      << strIdx << L" РёРјСЏ СЃРѕС‚СЂСѓРґРЅРёРєР° '" << name
-                      << L"', СЃРїРµС†РёР°Р»СЊРЅРѕСЃС‚СЊ '" << posAsText << L"'\n";
+            std::cout << "Попытка загрузить данные сотрудника из строки "
+                      << strIdx << " имя сотрудника '" << name
+                      << "', специальность '" << posAsText << "'\n";
         }
         IEmployerPtr empl = factory.createEmployer(name, posAsText);
         if (m_verbose && empl) {
-            std::cout << "РРЅС„РѕСЂРјР°С†РёСЏ Рѕ СЃРѕС‚СЂСѓРґРЅРёРєРµ СѓСЃРїРµС€РЅРѕ СЃРѕР·РґР°РЅР°\n";
+            std::cout << "Информация о сотруднике успешно создана\n";
         }
         dept.addEmployer(empl);
 	}
 }
 
-CSVReader::IdsMap CSVReader::getIdsMap(const std::wstring& firstFileLine,
+CSVReader::IdsMap CSVReader::getIdsMap(const std::string& firstFileLine,
                                          const std::string& fileName) noexcept
 {
 	IdsMap idsMap;
@@ -124,8 +125,8 @@ CSVReader::IdsMap CSVReader::getIdsMap(const std::wstring& firstFileLine,
         const auto tokIt = std::find(tokenizer.begin(), tokenizer.end(), idIt->first);
         if (tokIt == tokenizer.end()) {
             if (m_verbose) {
-                std::wcout << L"Р’ С„Р°Р№Р»Рµ '" /*<< fileName*/ << L"' РЅРµ "
-                              L"РѕР±РЅР°СЂСѓР¶РµРЅ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ '" << idIt->first << L"'\n";
+                std::cout << "В файле '" /*<< fileName*/ << "' не "
+                             "обнаружен идентификатор '" << idIt->first << "'\n";
             }
 			idsMap.clear();
             break;
@@ -141,7 +142,7 @@ Departament& CSVReader::getDepartamen(const std::string& deptName) {
         return it->second;
     auto p = m_depts.emplace(deptName, deptName);
     if (!p.second) {
-        throw CSVReaderException("РќРµ СѓРґР°Р»РѕСЃСЊ РґРѕР±Р°РІРёС‚СЊ РїРѕРґСЂР°Р·РґРµР»РµРЅРёРµ СЃ РёРјРµРЅРµРј " + deptName);
+        throw CSVReaderException("Не удалось добавить подразделение с именем " + deptName);
     }
     return p.first->second;
 }
