@@ -4,11 +4,12 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/tokenizer.hpp>
+#include <map>
 
 namespace b = boost;
 namespace sys = b::system;
 
-#include "structures.h"
+#include "Departament.h"
 
 namespace fs = boost::filesystem;
 
@@ -20,24 +21,29 @@ public:
         {}
 };
 
+
+
 class CSVReader
 {
-    using IdsList = std::list<std::pair<std::string, int>>;
-    using Tokenizer = b::tokenizer<b::char_separator<char>>;
+	using IdsMap = std::map<std::string, int>;
+	//using IdPair = IdsMap::value_type;
+	using Tokenizer = b::tokenizer<b::char_separator<char>>;
 public:
     CSVReader(const std::string path, bool verbose);
     //const Departaments& depts() const { return m_depts; }
 
 private:
     void readFolder(const std::string& path);
-	void readFile(const std::string& fileName);
-    IdsList getIdsList(const std::string& firstFileLine,
-                       const std::string& fileName) noexcept;
+	void readFile(const std::string& fileName,
+				  const std::string& depName);
+	IdsMap getIdsMap(const std::string& firstFileLine,
+                     const std::string& fileName) noexcept;
 private:
     bool m_verbose;
     fs::path m_path;
     //Departaments m_depts;
     const b::char_separator<char> m_sep;
-
+	Departaments m_deps;
+	static const IdsMap s_idsMap;
 };
 

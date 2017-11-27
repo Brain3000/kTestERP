@@ -10,6 +10,11 @@ const char kCSVExtension[] = ".csv";
 const std::string kNameId = "Фамилия";
 const std::string kPositionId = "Специальность";
 
+const CSVReader::IdsMap CSVReader::s_idsMap {
+	{ kNameId, -1 },
+	{ kPositionId, -1 }
+};
+
 CSVReader::CSVReader(const std::string path, bool verbose) :
     m_verbose(verbose), m_sep(";") {
     if (m_verbose) {
@@ -41,7 +46,7 @@ void CSVReader::readFolder(const std::string& path) {
             // If it's not a directory, list it. If you want to list directories too, just remove this check.
             if (fs::is_regular_file(itr->path()) &&
                 itr->path().extension().string() == kCSVExtension) {
-				readFile(itr->path().string());
+				readFile(itr->path().string(), itr->path().stem().string());
             }
         }
     }
@@ -50,7 +55,8 @@ void CSVReader::readFolder(const std::string& path) {
     }
 }
 
-void CSVReader::readFile(const std::string& fileName) {
+void CSVReader::readFile(const std::string& fileName,
+						 const std::string& depName) {
 	if (m_verbose) {
 		std::cout << "Попытка прочитать информацию из файла: '"
 			<< fileName << "'\n";
@@ -64,37 +70,52 @@ void CSVReader::readFile(const std::string& fileName) {
 		}
 		return;
 	}
-    IdsList idsList;
+    IdsMap idsMap;
 	while (getline(iStream, buf)) {
 		//Tokenizer tokenizer(buf, sep);
 		// Надо определить индексы нужных полей (если будут)
-		if (idsList.empty()) {
-            idsList = getIdsList(buf, fileName);
+		if (idsMap.empty()) {
+			idsMap = getIdsMap(buf, fileName);
 		}
-        if (idsList.empty())
-            return;
+		if (idsMap.empty()) {
+			return;
+		}
 	}
 }
 
-CSVReader::IdsList CSVReader::getIdsList(const std::string& firstFileLine,
-                                           const std::string& fileName) noexcept
+CSVReader::IdsMap CSVReader::getIdsMap(const std::string& firstFileLine,
+                                         const std::string& fileName) noexcept
 {
-    IdsList idsList{
-        { kNameId, -1 },
-        { kPositionId, -1 }
-    };
+	IdsMap idsMap;
     Tokenizer tokenizer(firstFileLine, m_sep);
-    for (auto idIt = idsList.begin(); idIt != idsList.end(); ++idIt) {
+    for (auto idIt = idsMap.begin(); idIt != idsMap.end(); ++idIt) {
         const auto tokIt = std::find(tokenizer.begin(), tokenizer.end(), idIt->first);
         if (tokIt == tokenizer.end()) {
             if (m_verbose) {
                 std::cout << "В файле '" << fileName << "' не "
                     "обнаружен идентификатор '" << idIt->first << "'\n";
             }
-            idsList.clear();
+			idsMap.clear();
             break;
         }
         idIt->second = std::distance(tokenizer.begin(), tokIt);
     }
-    return idsList;
+	if (idsMap.size() != s_idsMap.size()) {
+		if (m_verbose) {
+			IdsMap diff;
+			std::set_difference(s_idsMap.begin(), s_idsMap.end(),
+				idsMap.begin(), idsMap.begin(),
+				std::inserter(diff, diff.begin()));
+			if (!diff.empty()) {
+				std::cout << "Не удалось получить идентификатор(ы): ";
+				for (auto v : diff) {
+					std::cout << v.first;
+				}
+				std::cout << std::endl;
+			}
+		}
+		return;
+		idsMap.clear();
+	}
+	return idsMap;
 }
