@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 
 #include <iostream>
 
@@ -41,7 +41,7 @@ IEmployerPtr EmployerFactory::createEmployer(const std::wstring& name,
             return std::make_shared<Accountant>(name);
         default:
             if (m_verbose) {
-                std::wcout << L"Неизвестное название специальности: "
+                std::wcout << L"РќРµРёР·РІРµСЃС‚РЅРѕРµ РЅР°Р·РІР°РЅРёРµ СЃРїРµС†РёР°Р»СЊРЅРѕСЃС‚Рё: "
                           << positionAsText << std::endl;
             }
             break;
@@ -55,10 +55,10 @@ EmployerPosition EmployerFactory::textToPosition(const std::wstring& positionAsT
 {
     using EmplPosMap = std::unordered_map<std::wstring, EmployerPosition>;
     static const EmplPosMap emplMap = {
-        { L"Разработчик", EmployerPosition::eProgrammer },
-        { L"Писатель", EmployerPosition::eWriter },
-        { L"Тестер", EmployerPosition::eTester },
-        { L"Писатель", EmployerPosition::eAccountant },
+        { L"Р Р°Р·СЂР°Р±РѕС‚С‡РёРє", EmployerPosition::eProgrammer },
+        { L"РџРёСЃР°С‚РµР»СЊ", EmployerPosition::eWriter },
+        { L"РўРµСЃС‚РµСЂ", EmployerPosition::eTester },
+        { L"РџРёСЃР°С‚РµР»СЊ", EmployerPosition::eAccountant },
     };
     EmployerPosition pos = EmployerPosition::eUnknown;
     auto it = emplMap.find(positionAsText);

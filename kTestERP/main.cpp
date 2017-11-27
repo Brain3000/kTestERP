@@ -15,7 +15,7 @@ const char kVersionOption[] = "version";
 const char kVerboseOption[] = "verbose";
 const char kInputCatalogParam[] = "input-calalog";
 
-// Для сокращения namespace
+// Р”Р»СЏ СЃРѕРєСЂР°С‰РµРЅРёСЏ namespace
 namespace po = boost::program_options;
 
 int main(int argc, char** argv)
@@ -23,19 +23,19 @@ int main(int argc, char** argv)
     try
     {
         setlocale(LC_ALL, "Russian");
-        po::options_description options("Доступные параметры");
+        po::options_description options("Р”РѕСЃС‚СѓРїРЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹");
         options.add_options()
-            ("help,h", "вывод подсказки")                                   // Опция помощи
-            ("version,v", "отображение версии приложения")                  // Опция вывода версии
-            ("verbose", "дополнительные сообщения (при чтении cvs)")        // Опция дополнительных сообщений
-                                                                            // при загрузке csv
-            // Позиционный параметр - каталог с csv
-            (kInputCatalogParam, po::value<std::string>(), "каталог с входными "
-				"файлами cvs (для работы программы этот параметр надо указывать обязательно)");
+            ("help,h", "РІС‹РІРѕРґ РїРѕРґСЃРєР°Р·РєРё")                                   // РћРїС†РёСЏ РїРѕРјРѕС‰Рё
+            ("version,v", "РѕС‚РѕР±СЂР°Р¶РµРЅРёРµ РІРµСЂСЃРёРё РїСЂРёР»РѕР¶РµРЅРёСЏ")                  // РћРїС†РёСЏ РІС‹РІРѕРґР° РІРµСЂСЃРёРё
+            ("verbose", "РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ СЃРѕРѕР±С‰РµРЅРёСЏ (РїСЂРё С‡С‚РµРЅРёРё cvs)")        // РћРїС†РёСЏ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹С… СЃРѕРѕР±С‰РµРЅРёР№
+                                                                            // РїСЂРё Р·Р°РіСЂСѓР·РєРµ csv
+            // РџРѕР·РёС†РёРѕРЅРЅС‹Р№ РїР°СЂР°РјРµС‚СЂ - РєР°С‚Р°Р»РѕРі СЃ csv
+            (kInputCatalogParam, po::value<std::string>(), "РєР°С‚Р°Р»РѕРі СЃ РІС…РѕРґРЅС‹РјРё "
+				"С„Р°Р№Р»Р°РјРё cvs (РґР»СЏ СЂР°Р±РѕС‚С‹ РїСЂРѕРіСЂР°РјРјС‹ СЌС‚РѕС‚ РїР°СЂР°РјРµС‚СЂ РЅР°РґРѕ СѓРєР°Р·С‹РІР°С‚СЊ РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ)");
 
         po::variables_map vm;
         po::positional_options_description positional;
-        // Добавляем позиционные параметры
+        // Р”РѕР±Р°РІР»СЏРµРј РїРѕР·РёС†РёРѕРЅРЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹
         positional.add(kInputCatalogParam, 1);
 
         po::store(po::command_line_parser(argc, argv).
@@ -45,7 +45,7 @@ int main(int argc, char** argv)
                   vm);
         po::notify(vm);
 
-        // Если встретилась опция help
+        // Р•СЃР»Рё РІСЃС‚СЂРµС‚РёР»Р°СЃСЊ РѕРїС†РёСЏ help
         if (vm.count(kHelpOption))
         {
             std::cout << options << std::endl;
@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 #endif
             return 0;
         }
-        // Если встретилась опция version
+        // Р•СЃР»Рё РІСЃС‚СЂРµС‚РёР»Р°СЃСЊ РѕРїС†РёСЏ version
         if (vm.count(kVersionOption))
         {
             std::cout << "Test ERP 1.0" << std::endl;
@@ -76,14 +76,14 @@ int main(int argc, char** argv)
         }
     }
     catch (std::exception& e) {
-        std::cerr << "Ошибка: " << e.what() << std::endl;
+        std::cerr << "РћС€РёР±РєР°: " << e.what() << std::endl;
 #ifdef _DEBUG
         _getch();
 #endif
         return 1;
     }
     catch (...) {
-        std::cerr << "Исключение неизвестного типа!\n";
+        std::cerr << "РСЃРєР»СЋС‡РµРЅРёРµ РЅРµРёР·РІРµСЃС‚РЅРѕРіРѕ С‚РёРїР°!\n";
         return 1;
     }
 #ifdef _DEBUG
