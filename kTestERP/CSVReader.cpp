@@ -18,7 +18,7 @@ const CSVReader::IdsMap CSVReader::s_idsMap {
 };
 
 CSVReader::CSVReader(const std::string path, bool verbose) :
-    m_verbose(verbose), m_sep(";") {
+    m_verbose(verbose), m_sep(";", "", boost::keep_empty_tokens) {
     if (m_verbose) {
         std::cout << "Указан каталог с входными файлами: '"
                   << path << "'\n";
@@ -58,14 +58,15 @@ void CSVReader::readFolder(const std::string& path) {
 }
 
 void CSVReader::readFile(const std::string& fileName,
-						 const std::string& depName) {
+						 const std::string& deptName) {
 	if (m_verbose) {
 		std::cout << "Попытка прочитать информацию из файла: '"
 			<< fileName << "'\n";
 	}
 	// Закрывать поток не буду, бо сам закроется на диструкции
 	std::ifstream iStream(fileName);
-    iStream.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<char>));
+    //iStream.imbue(std::locale("ru_RU.CP1251"));
+    //iStream.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
     std::string buf;
 	if (!iStream.good()) {
 		if (m_verbose) {
@@ -73,12 +74,17 @@ void CSVReader::readFile(const std::string& fileName,
 		}
 		return;
 	}
-    Departament& dept(getDepartamen(depName));
+    Departament& dept(getDepartamen(deptName));
     EmployerFactory factory(m_verbose);
     IdsMap idsMap;
-	int maxIdx(-1), strIdx(0);
+	int maxIdx(-1), strIdx(0), emplAdded(0);
+    
+    //using convert_type = std::codecvt_utf8<wchar_t>;
+    //static std::wstring_convert<convert_type, wchar_t> converter;
+
 	while (getline(iStream, buf)) {
 		++strIdx;
+        //std::string buf = converter.to_bytes(wbuf);
 		// Надо определить индексы нужных полей (если будут)
 		if (idsMap.empty()) {
 			idsMap = getIdsMap(buf, fileName);
@@ -97,7 +103,7 @@ void CSVReader::readFile(const std::string& fileName,
 			if (m_verbose) {
 				std::cout << "В строке " << strIdx << " менее "
 						  << maxIdx << " элементов, поэтому из неё нельзя извлечь "
-								       "данные о сотруднике";
+								       "данные о сотруднике\n";
 			}
             continue;
 		}
@@ -112,14 +118,22 @@ void CSVReader::readFile(const std::string& fileName,
         if (m_verbose && empl) {
             std::cout << "Информация о сотруднике успешно создана\n";
         }
-        dept.addEmployer(empl);
+
+        if (empl && dept.addEmployer(empl))
+            ++emplAdded;
 	}
+    if (m_verbose)
+    {
+        std::cout << "Обработано " << strIdx << " строк файла '"
+                  << fileName << "' добавлено " << emplAdded << " сотрудников в отдел '"
+                  << deptName << "'\n";
+    }
 }
 
 CSVReader::IdsMap CSVReader::getIdsMap(const std::string& firstFileLine,
                                          const std::string& fileName) noexcept
 {
-	IdsMap idsMap;
+	IdsMap idsMap = s_idsMap;
     Tokenizer tokenizer(firstFileLine, m_sep);
     for (auto idIt = idsMap.begin(); idIt != idsMap.end(); ++idIt) {
         const auto tokIt = std::find(tokenizer.begin(), tokenizer.end(), idIt->first);

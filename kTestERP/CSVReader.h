@@ -37,7 +37,7 @@ public:
 private:
     void readFolder(const std::string& path);
 	void readFile(const std::string& fileName,
-				  const std::string& depName);
+				  const std::string& deptName);
 	IdsMap getIdsMap(const std::string& firstFileLine,
                      const std::string& fileName) noexcept;
     Departament& getDepartamen(const std::string& deptName);

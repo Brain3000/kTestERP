@@ -41,11 +41,15 @@ IEmployerPtr EmployerFactory::createEmployer(const std::string& name,
             return std::make_shared<Accountant>(name);
         default:
             if (m_verbose) {
-                std::cout << "Неизвестное название специальности: "
-                          << positionAsText << std::endl;
+                std::cout << "Неизвестное название специальности: '"
+                          << positionAsText << "'\n";
             }
             break;
         }
+    }
+    else if (m_verbose)
+    {
+        std::cout << "Указано пустая фамилия сотрудника, такого сотрудника нельзя добавить\n";
     }
 
     return nullptr;
@@ -58,7 +62,7 @@ EmployerPosition EmployerFactory::textToPosition(const std::string& positionAsTe
         { "Разработчик", EmployerPosition::eProgrammer },
         { "Писатель", EmployerPosition::eWriter },
         { "Тестер", EmployerPosition::eTester },
-        { "Писатель", EmployerPosition::eAccountant },
+        { "Бухгалтер", EmployerPosition::eAccountant },
     };
     EmployerPosition pos = EmployerPosition::eUnknown;
     auto it = emplMap.find(positionAsText);

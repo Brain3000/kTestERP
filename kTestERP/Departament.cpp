@@ -2,9 +2,12 @@
 
 #include <algorithm>
 
+#include <assert.h>
+
 #include "Departament.h"
 
 bool Departament::addEmployer(IEmployerPtr employer) {
+    assert(employer);
     if (std::find_if(m_employers.begin(),
                      m_employers.end(),
                      EmployerEqual(employer)) != m_employers.end()) {
