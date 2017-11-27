@@ -3,12 +3,14 @@
 
 #include <iostream>
 #include <fstream>
+#include <iterator>
+#include <codecvt>
 
 #include <boost/system/system_error.hpp>
 
 const char kCSVExtension[] = ".csv";
-const std::string kNameId = "Фамилия";
-const std::string kPositionId = "Специальность";
+const std::wstring kNameId = L"Фамилия";
+const std::wstring kPositionId = L"Специальность";
 
 const CSVReader::IdsMap CSVReader::s_idsMap {
 	{ kNameId, -1 },
@@ -16,7 +18,7 @@ const CSVReader::IdsMap CSVReader::s_idsMap {
 };
 
 CSVReader::CSVReader(const std::string path, bool verbose) :
-    m_verbose(verbose), m_sep(";") {
+    m_verbose(verbose), m_sep(L";") {
     if (m_verbose) {
         std::cout << "Указан каталог с входными файлами: "
             << path << std::endl;
@@ -62,28 +64,59 @@ void CSVReader::readFile(const std::string& fileName,
 			<< fileName << "'\n";
 	}
 	// Закрывать поток не буду, бо сам закроется на диструкции
-	std::ifstream iStream(fileName);
-	std::string buf;
+	std::wifstream iStream(fileName);
+    iStream.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
+    std::wstring buf;
 	if (!iStream.good()) {
 		if (m_verbose) {
 			std::cout << "Не удалось открыть файл '" << fileName << "'\n";
 		}
 		return;
 	}
+    Departament& dept(getDepartamen(depName));
+    EmployerFactory factory(m_verbose);
     IdsMap idsMap;
+	int maxIdx(-1), strIdx(0);
 	while (getline(iStream, buf)) {
-		//Tokenizer tokenizer(buf, sep);
+		++strIdx;
 		// Надо определить индексы нужных полей (если будут)
 		if (idsMap.empty()) {
 			idsMap = getIdsMap(buf, fileName);
+			if (idsMap.empty()) {
+				return;
+			}
+			maxIdx = std::max_element(idsMap.begin(),
+									  idsMap.end(),
+									  [](const IdPair& p1, const IdPair& p2)
+									  { return p1.second < p2.second; })->second;
+			continue;
 		}
-		if (idsMap.empty()) {
-			return;
+		// Индексы идентификаторов получены, начинаем извлекать данные
+		Tokenizer tokenizer(buf, m_sep);
+		if (std::distance(tokenizer.begin(), tokenizer.end()) <= maxIdx) {
+			if (m_verbose) {
+				std::cout << "В строке " << strIdx << " менее "
+						  << maxIdx << " элементов, поэтому из неё нельзя извлечь "
+								       "данные о сотруднике";
+			}
+            continue;
 		}
+        const std::wstring name = *(std::next(tokenizer.begin(), idsMap[kNameId]));
+        const std::wstring posAsText = *(std::next(tokenizer.begin(), idsMap[kPositionId]));
+        if (m_verbose) {
+            std::wcout << L"Попытка загрузить данные сотрудника из строки "
+                      << strIdx << L" имя сотрудника '" << name
+                      << L"', специальность '" << posAsText << L"'\n";
+        }
+        IEmployerPtr empl = factory.createEmployer(name, posAsText);
+        if (m_verbose && empl) {
+            std::cout << "Информация о сотруднике успешно создана\n";
+        }
+        dept.addEmployer(empl);
 	}
 }
 
-CSVReader::IdsMap CSVReader::getIdsMap(const std::string& firstFileLine,
+CSVReader::IdsMap CSVReader::getIdsMap(const std::wstring& firstFileLine,
                                          const std::string& fileName) noexcept
 {
 	IdsMap idsMap;
@@ -92,30 +125,24 @@ CSVReader::IdsMap CSVReader::getIdsMap(const std::string& firstFileLine,
         const auto tokIt = std::find(tokenizer.begin(), tokenizer.end(), idIt->first);
         if (tokIt == tokenizer.end()) {
             if (m_verbose) {
-                std::cout << "В файле '" << fileName << "' не "
-                    "обнаружен идентификатор '" << idIt->first << "'\n";
+                std::wcout << L"В файле '" /*<< fileName*/ << L"' не "
+                              L"обнаружен идентификатор '" << idIt->first << L"'\n";
             }
 			idsMap.clear();
             break;
         }
         idIt->second = std::distance(tokenizer.begin(), tokIt);
     }
-	if (idsMap.size() != s_idsMap.size()) {
-		if (m_verbose) {
-			IdsMap diff;
-			std::set_difference(s_idsMap.begin(), s_idsMap.end(),
-				idsMap.begin(), idsMap.begin(),
-				std::inserter(diff, diff.begin()));
-			if (!diff.empty()) {
-				std::cout << "Не удалось получить идентификатор(ы): ";
-				for (auto v : diff) {
-					std::cout << v.first;
-				}
-				std::cout << std::endl;
-			}
-		}
-		return;
-		idsMap.clear();
-	}
 	return idsMap;
+}
+
+Departament& CSVReader::getDepartamen(const std::string& deptName) {
+    auto it = m_depts.find(deptName);
+    if (it != m_depts.end())
+        return it->second;
+    auto p = m_depts.emplace(deptName, deptName);
+    if (!p.second) {
+        throw CSVReaderException("Не удалось добавить подразделение с именем " + deptName);
+    }
+    return p.first->second;
 }

@@ -25,9 +25,11 @@ public:
 
 class CSVReader
 {
-	using IdsMap = std::map<std::string, int>;
-	//using IdPair = IdsMap::value_type;
-	using Tokenizer = b::tokenizer<b::char_separator<char>>;
+	using IdsMap = std::map<std::wstring, int>;
+	using IdPair = IdsMap::value_type;
+	using Tokenizer = b::tokenizer<b::char_separator<wchar_t>,
+                                   std::wstring::const_iterator,
+                                   std::wstring>;
 public:
     CSVReader(const std::string path, bool verbose);
     //const Departaments& depts() const { return m_depts; }
@@ -36,13 +38,14 @@ private:
     void readFolder(const std::string& path);
 	void readFile(const std::string& fileName,
 				  const std::string& depName);
-	IdsMap getIdsMap(const std::string& firstFileLine,
+	IdsMap getIdsMap(const std::wstring& firstFileLine,
                      const std::string& fileName) noexcept;
+    Departament& getDepartamen(const std::string& deptName);
 private:
     bool m_verbose;
     fs::path m_path;
-    //Departaments m_depts;
-    const b::char_separator<char> m_sep;
+    Departaments m_depts;
+    const b::char_separator<wchar_t> m_sep;
 	Departaments m_deps;
 	static const IdsMap s_idsMap;
 };
