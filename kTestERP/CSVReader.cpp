@@ -17,8 +17,10 @@ const CSVReader::IdsMap CSVReader::s_idsMap {
 	{ kPositionId, -1 }
 };
 
-CSVReader::CSVReader(const std::string path, bool verbose) :
-    m_verbose(verbose), m_sep(";", "", boost::keep_empty_tokens) {
+CSVReader::CSVReader(Company& company, const std::string path, bool verbose) :
+    m_company(company),
+    m_verbose(verbose),
+    m_sep(";", "", boost::keep_empty_tokens) {
     if (m_verbose) {
         std::cout << "Указан каталог с входными файлами: '"
                   << path << "'\n";
@@ -34,14 +36,14 @@ void CSVReader::readFolder(const std::string& path) {
 		//std::cout << fs::current_path().string() << std::endl;
 
         if (!fs::exists(m_path)) {
-            throw CSVReaderException("Путь '" + m_path.string() + "' не существует");
+            throw ERPException("Путь '" + m_path.string() + "' не существует");
         }
         if (!fs::is_directory(m_path)) {
-            throw CSVReaderException("Путь '" + m_path.string() + " не является каталогом");
+            throw ERPException("Путь '" + m_path.string() + " не является каталогом");
         }
         fs::perms perm = fs::status(m_path).permissions();
         if (!(perm & fs::perms::others_read)) {
-            throw CSVReaderException("Каталог '" + m_path.string() + "' не имеет прав на чтение");
+            throw ERPException("Каталог '" + m_path.string() + "' не имеет прав на чтение");
         }
         fs::recursive_directory_iterator end_itr;
         for (fs::recursive_directory_iterator itr(m_path); itr != end_itr; ++itr) {
@@ -53,7 +55,7 @@ void CSVReader::readFolder(const std::string& path) {
         }
     }
     catch (const sys::system_error& ex) {
-        throw CSVReaderException(ex.what());
+        throw ERPException(ex.what());
     }
 }
 
@@ -74,7 +76,7 @@ void CSVReader::readFile(const std::string& fileName,
 		}
 		return;
 	}
-    Departament& dept(getDepartamen(deptName));
+    Departament& dept(m_company.getOrCreateDept(deptName));
     EmployerFactory factory(m_verbose);
     IdsMap idsMap;
 	int maxIdx(-1), strIdx(0), emplAdded(0);
@@ -148,15 +150,4 @@ CSVReader::IdsMap CSVReader::getIdsMap(const std::string& firstFileLine,
         idIt->second = std::distance(tokenizer.begin(), tokIt);
     }
 	return idsMap;
-}
-
-Departament& CSVReader::getDepartamen(const std::string& deptName) {
-    auto it = m_depts.find(deptName);
-    if (it != m_depts.end())
-        return it->second;
-    auto p = m_depts.emplace(deptName, deptName);
-    if (!p.second) {
-        throw CSVReaderException("Не удалось добавить подразделение с именем " + deptName);
-    }
-    return p.first->second;
 }

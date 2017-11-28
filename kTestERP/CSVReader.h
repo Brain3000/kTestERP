@@ -9,18 +9,9 @@
 namespace b = boost;
 namespace sys = b::system;
 
-#include "Departament.h"
+#include "Company.h"
 
 namespace fs = boost::filesystem;
-
-class CSVReaderException : public std::exception
-{
-public:
-    CSVReaderException(std::string message) :
-        std::exception(message.c_str())
-        {}
-};
-
 
 
 class CSVReader
@@ -31,8 +22,7 @@ class CSVReader
                                    std::string::const_iterator,
                                    std::string>;
 public:
-    CSVReader(const std::string path, bool verbose);
-    //const Departaments& depts() const { return m_depts; }
+    CSVReader(Company& company, const std::string path, bool verbose);
 
 private:
     void readFolder(const std::string& path);
@@ -40,13 +30,11 @@ private:
 				  const std::string& deptName);
 	IdsMap getIdsMap(const std::string& firstFileLine,
                      const std::string& fileName) noexcept;
-    Departament& getDepartamen(const std::string& deptName);
 private:
+    Company& m_company;
     bool m_verbose;
     fs::path m_path;
-    Departaments m_depts;
     const b::char_separator<char> m_sep;
-	Departaments m_deps;
 	static const IdsMap s_idsMap;
 };
 

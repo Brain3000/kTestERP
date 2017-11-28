@@ -8,7 +8,7 @@
 #include <iostream>
 #include <boost/program_options.hpp>
 
-#include "CSVReader.h"
+#include "MainUtil.h"
 
 const char kHelpOption[] = "help";
 const char kVersionOption[] = "version";
@@ -63,12 +63,13 @@ int main(int argc, char** argv)
 #endif
             return 0;
         }
-        bool verbose = vm.count(kVerboseOption);
 
         if (vm.count(kInputCatalogParam))
         {
+            MainUtil mainUtil(vm.count(kVerboseOption));
             std::string catalog = vm["input-calalog"].as<std::string>();
-            CSVReader reader(catalog, verbose);
+            mainUtil.loadDataFromDir(catalog);
+            mainUtil.run();
         }
         else
         {

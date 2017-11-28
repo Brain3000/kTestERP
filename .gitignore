@@ -2,3 +2,5 @@ Debug
 ConsoleApplication1/Debug
 .vs
 *.user
+Cnv.cpp
+Cnv.h
