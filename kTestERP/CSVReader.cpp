@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "CSVReader.h"
 
 #include <iostream>
 #include <fstream>
@@ -7,6 +6,9 @@
 #include <codecvt>
 
 #include <boost/system/system_error.hpp>
+
+#include "CSVReader.h"
+#include "ERPException.h"
 
 const char kCSVExtension[] = ".csv";
 const std::string kNameId = "Фамилия";
@@ -135,7 +137,7 @@ void CSVReader::readFile(const std::string& fileName,
         std::cout << "Обработано " << strIdx << " строк файла '"
                   << fileName << "' добавлено " << emplAdded << " сотрудников в отдел '"
                   << deptName << "', всего в отделе "
-                  << dept.getAllEmployers().size() << " сотрудников\n";
+                  << dept.getChild().size() << " сотрудников\n";
     }
 }
 

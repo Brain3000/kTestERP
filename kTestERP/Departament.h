@@ -3,26 +3,25 @@
 #include <string>
 #include <memory>
 #include <unordered_map>
-//#include <unordered_set>
 #include <list>
 #include <assert.h>
 
 #include "Employer.h"
 
-class Departament {
-public:
-    explicit Departament(std::string name) noexcept :
-        m_name(name) {}
-    bool addEmployer(IEmployerPtr employer);
-    EmployersList&& getEmployers(EmployerPosition position) const;
-    const std::string& name() const
-        { return m_name;  }
-    const EmployersList& getAllEmployers() const noexcept
-        { return m_employers; }
+class Departament : public UnitImpl<UnitKind::eDepartament>{
+    struct EmployerEqual : std::unary_function<IEmployer*, bool> {
+        EmployerEqual(const IUnit* val) : m_val(static_cast<const IEmployer*>(val)) {}
+        bool operator()(IUnitPtr u) const {
+            IEmployer* e = static_cast<IEmployer*>(u.get());
+            return (e->name() == m_val->name() && m_val->position() == e->position());
+        }
+        const IEmployer* m_val;
+    };
 
-private:
-    const std::string m_name;
-    EmployersList m_employers;
+public:
+    explicit Departament(std::string name) :
+        UnitImpl(name) {}
+    bool addEmployer(IEmployerPtr employer);
 };
 
 using Departaments = std::unordered_map<std::string, Departament>;

@@ -1,5 +1,7 @@
 #include "stdafx.h"
+
 #include "Company.h"
+#include "ERPException.h"
 
 Departament& Company::getOrCreateDept(const std::string& deptName)
 {

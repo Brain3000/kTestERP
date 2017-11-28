@@ -4,7 +4,7 @@
 #include <list>
 #include <string>
 #include <unordered_set>
-
+#include <algorithm>
 
 enum class Job {
     eProgramming,
@@ -42,9 +42,12 @@ public:
     virtual UnitKind kind() const noexcept = 0;
 };
 
-template<UnitKind K>
+template<UnitKind K/*, typename C*/>
 class UnitImpl : public IUnit {
 public:
+    //using ChildPtr = std::shared_ptr<C>;
+    //using ChildList = std::list<ChildPtr>;
+
     explicit UnitImpl(const std::string& name) : m_name(name)
         {}
     virtual UnitKind kind() const noexcept {
@@ -54,11 +57,13 @@ public:
         return m_childs;
     }
     virtual bool canDo(Job job) const noexcept {
-        const auto it =
+        auto it =
             std::find_if(m_childs.begin(), m_childs.end(),
-                [job](const auto c) { return c->canDo(job); });
+                [job](auto c) { return c->canDo(job); });
         return (it != m_childs.end());
     }
+    virtual const std::string& name() const noexcept
+        { return m_name; }
 
 protected:
     UnitList m_childs;

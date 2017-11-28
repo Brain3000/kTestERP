@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Departament.h"
-#include "ERPException.h"
 
 class Company
 {

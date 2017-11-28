@@ -22,15 +22,8 @@ public:
 };
 
 using IEmployerPtr = std::shared_ptr<IEmployer>;
-struct EmployerEqual : std::unary_function<IEmployerPtr, bool> {
-    EmployerEqual(IEmployerPtr val) : m_val(val){}
-    bool operator()(const IEmployerPtr& e1) const {
-        return (e1->name() == m_val->name() && m_val->position() == e1->position());
-    }
-private:
-    IEmployerPtr m_val;
-};
 
+//template<EmployerPosition P, Job... jobs>
 class Employer : public IEmployer {
 // IEmployer
 public:
@@ -50,26 +43,31 @@ public:
     virtual UnitKind kind() const noexcept
         { return UnitKind::eEmployer; }
 
-protected:
-    Employer(const std::string& name, EmployerPosition position) noexcept :
+public:
+    Employer(const std::string& name, EmployerPosition position) :
         m_name(name), m_position(position) {}
+    //{
+    //    Jobs j = { { jobs... } };
+    //    m_jobs.insert(j.begin(), j.end());
+    //}
+
+protected:
+    Jobs m_jobs;
 
 private:
     const std::string m_name;
     EmployerPosition m_position;
-
-protected:
-    Jobs m_jobs;
 };
 
 
 template<EmployerPosition P, Job... jobs>
 class EmployerImpl : public Employer {
 public:
-    EmployerImpl(const std::string& name) noexcept :
+    EmployerImpl(const std::string& name) :
     Employer(name, P) {
-        Jobs j = { { jobs... } };
-        m_jobs.insert(j.begin(), j.end());
+        m_jobs = { { jobs... } };
+        m_jobs.insert(Job::eCleaning);
+        m_jobs.insert(Job::eVacation);
     }
 };
 
@@ -78,9 +76,8 @@ using Writer = EmployerImpl<EmployerPosition::eWriter, Job::eTranslation>;
 using Tester = EmployerImpl<EmployerPosition::eWriter, Job::eTesting, Job::ePlaningTest>;
 using Accountant = EmployerImpl<EmployerPosition::eWriter, Job::ePaySallory, Job::eReporting>;
 
-using EmployersMap = std::unordered_map<EmployerPosition, IEmployerPtr>;
-using EmployersMapPair = EmployersMap::value_type;
-using EmployersList = std::list<IEmployerPtr>;
+//using EmployersMap = std::unordered_map<EmployerPosition, IEmployerPtr>;
+//using EmployersMapPair = EmployersMap::value_type;
 
 class EmployerFactory {
 public:
