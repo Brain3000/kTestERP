@@ -4,29 +4,6 @@
 
 #include "Employer.h"
 
-
-Employer::Employer(const std::string& name,
-                   EmployerPosition position) noexcept :
-    UnitImpl<UnitKind::eEmployer>(name),
-    m_position(position) {
-    m_jobs = { Job::eVacation, Job::eCleaning };
-}
-
-bool Employer::canJob(Job job) const noexcept {
-    return (m_jobs.find(job) != m_jobs.end());
-}
-
-//const std::string& Employer::name() const noexcept {
-//    return m_name;
-//}
-EmployerPosition Employer::position() const noexcept {
-    return m_position;
-}
-const IEmployer::Jobs& Employer::jobs() const noexcept {
-    return m_jobs;
-}
-
-
 IEmployerPtr EmployerFactory::createEmployer(const std::string& name,
                                              const std::string& positionAsText) {
     if (!name.empty()) {

@@ -2,7 +2,6 @@
 
 #include <string>
 #include <memory>
-#include <unordered_set>
 #include <unordered_map>
 #include <list>
 
@@ -16,10 +15,7 @@ enum class EmployerPosition {
     eAccountant
 };
 
-class IEmployer {
-public:
-    using Jobs = std::unordered_set<Job>;
-    virtual ~IEmployer(){}
+class IEmployer : public IUnit {
 public:    
     virtual EmployerPosition position() const noexcept = 0;
     virtual const Jobs& jobs() const noexcept = 0;
@@ -35,20 +31,31 @@ private:
     IEmployerPtr m_val;
 };
 
-class Employer : public UnitImpl<UnitKind::eEmployer>, public IEmployer {
+class Employer : public IEmployer {
 // IEmployer
 public:
-    virtual EmployerPosition position() const noexcept;
-    virtual const Jobs& jobs() const noexcept;
+    virtual EmployerPosition position() const noexcept
+        { return m_position; }
+    virtual const Jobs& jobs() const noexcept
+        { return m_jobs; }
 
 // IUnit
 public:
-    virtual bool canJob(Job job) const noexcept;
+    virtual bool canDo(Job job) const noexcept
+        { return (m_jobs.find(job) != m_jobs.end()); }
+    virtual const std::string& name() const noexcept
+        { return m_name; }
+    virtual const UnitList& getChild() const noexcept
+        { return kEmptyUnitList; }
+    virtual UnitKind kind() const noexcept
+        { return UnitKind::eEmployer; }
 
 protected:
-    Employer(const std::string& name, EmployerPosition position) noexcept;
+    Employer(const std::string& name, EmployerPosition position) noexcept :
+        m_name(name), m_position(position) {}
 
 private:
+    const std::string m_name;
     EmployerPosition m_position;
 
 protected:

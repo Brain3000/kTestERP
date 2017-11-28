@@ -3,6 +3,7 @@
 #include <memory>
 #include <list>
 #include <string>
+#include <unordered_set>
 
 
 enum class Job {
@@ -16,6 +17,8 @@ enum class Job {
     eVacation,
     eCleaning,
 };
+
+using Jobs = std::unordered_set<Job>;
 
 enum class UnitKind
 {
@@ -47,23 +50,17 @@ public:
     virtual UnitKind kind() const noexcept {
         return K;
     }
-    virtual const UnitList& getChild() const noexcept {
+    const UnitList& getChild() const noexcept {
         return m_childs;
     }
+    virtual bool canDo(Job job) const noexcept {
+        const auto it =
+            std::find_if(m_childs.begin(), m_childs.end(),
+                [job](const auto c) { return c->canDo(job); });
+        return (it != m_childs.end());
+    }
+
 protected:
     UnitList m_childs;
     const std::string m_name;
-};
-
-template<>
-class UnitImpl<UnitKind::eEmployer> : public IUnit
-{
-public:
-    virtual UnitKind kind() const noexcept {
-        return UnitKind::eEmployer;
-    }
-    virtual const UnitList& getChild() const noexcept {
-        return kEmptyUnitList;
-    }
-
 };
