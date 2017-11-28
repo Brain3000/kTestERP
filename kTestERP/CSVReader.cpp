@@ -121,14 +121,21 @@ void CSVReader::readFile(const std::string& fileName,
             std::cout << "Информация о сотруднике успешно создана\n";
         }
 
-        if (empl && dept.addEmployer(empl))
+        if (empl && dept.addEmployer(empl)) {
             ++emplAdded;
+            if (m_verbose) {
+                std::cout << "Сотрудник " << name << " со специальностью "
+                          << posAsText << " успешно добавлен в отдел "
+                          << deptName << std::endl;
+            }
+        }
 	}
     if (m_verbose)
     {
         std::cout << "Обработано " << strIdx << " строк файла '"
                   << fileName << "' добавлено " << emplAdded << " сотрудников в отдел '"
-                  << deptName << "'\n";
+                  << deptName << "', всего в отделе "
+                  << dept.getAllEmployers().size() << " сотрудников\n";
     }
 }
 
