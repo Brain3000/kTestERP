@@ -7,7 +7,8 @@
 
 Employer::Employer(const std::string& name,
                    EmployerPosition position) noexcept :
-    m_name(name), m_position(position) {
+    UnitImpl<UnitKind::eEmployer>(name),
+    m_position(position) {
     m_jobs = { Job::eVacation, Job::eCleaning };
 }
 
@@ -15,9 +16,9 @@ bool Employer::canJob(Job job) const noexcept {
     return (m_jobs.find(job) != m_jobs.end());
 }
 
-const std::string& Employer::name() const noexcept {
-    return m_name;
-}
+//const std::string& Employer::name() const noexcept {
+//    return m_name;
+//}
 EmployerPosition Employer::position() const noexcept {
     return m_position;
 }

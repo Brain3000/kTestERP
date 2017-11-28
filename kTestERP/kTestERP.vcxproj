@@ -155,6 +155,7 @@
     <ClInclude Include="CSVReader.h" />
     <ClInclude Include="Employer.h" />
     <ClInclude Include="ERPException.h" />
+    <ClInclude Include="IUnit.h" />
     <ClInclude Include="MainUtil.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Departament.h" />
