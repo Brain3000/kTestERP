@@ -8,7 +8,7 @@
 
 #include "Employer.h"
 
-class Departament : public UnitImpl<UnitKind::eDepartament>{
+class Departament : public UnitWithChildren<UnitKind::eDepartament>{
     struct EmployerEqual : std::unary_function<IEmployer*, bool> {
         EmployerEqual(const IUnit* val) : m_val(static_cast<const IEmployer*>(val)) {}
         bool operator()(IUnitPtr u) const {

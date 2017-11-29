@@ -4,6 +4,7 @@
 #include <memory>
 #include <unordered_map>
 #include <list>
+#include <assert.h>
 
 #include "IUnit.h"
 
@@ -15,7 +16,7 @@ enum class EmployerPosition {
     eAccountant
 };
 
-class IEmployer : public IUnit {
+class IEmployer {
 public:    
     virtual EmployerPosition position() const noexcept = 0;
     virtual const Jobs& jobs() const noexcept = 0;
@@ -24,7 +25,8 @@ public:
 using IEmployerPtr = std::shared_ptr<IEmployer>;
 
 //template<EmployerPosition P, Job... jobs>
-class Employer : public IEmployer {
+class Employer : public IEmployer,
+                 public UnitImpl<UnitKind::eEmployer> {
 // IEmployer
 public:
     virtual EmployerPosition position() const noexcept
@@ -34,28 +36,22 @@ public:
 
 // IUnit
 public:
-    virtual bool canDo(Job job) const noexcept
-        { return (m_jobs.find(job) != m_jobs.end()); }
-    virtual const std::string& name() const noexcept
-        { return m_name; }
-    virtual const UnitList& getChild() const noexcept
-        { return kEmptyUnitList; }
-    virtual UnitKind kind() const noexcept
-        { return UnitKind::eEmployer; }
+    virtual bool doJob(Job job) const noexcept {
+        bool jobResult = m_jobs.find(job) != m_jobs.end();
+        assert(m_parent);
+        if (m_parent)
+            m_parent->addRepRecord(m_name + " работу " +
+                (jobResult ? "выполнил" : "не может выполнить"));
+    }
 
 public:
-    Employer(const std::string& name, EmployerPosition position) :
-        m_name(name), m_position(position) {}
-    //{
-    //    Jobs j = { { jobs... } };
-    //    m_jobs.insert(j.begin(), j.end());
-    //}
+    Employer(const std::string& name, IUnit* parent, EmployerPosition position) :
+        UnitImpl(name, parent), m_position(position) {}
 
 protected:
     Jobs m_jobs;
 
 private:
-    const std::string m_name;
     EmployerPosition m_position;
 };
 
@@ -63,8 +59,8 @@ private:
 template<EmployerPosition P, Job... jobs>
 class EmployerImpl : public Employer {
 public:
-    EmployerImpl(const std::string& name) :
-    Employer(name, P) {
+    EmployerImpl(const std::string& name, IUnit* parent) :
+    Employer(name, parent, P) {
         m_jobs = { { jobs... } };
         m_jobs.insert(Job::eCleaning);
         m_jobs.insert(Job::eVacation);
