@@ -2,12 +2,13 @@
 
 #include "Departament.h"
 
-class Company
+using DepartamentPtr = std::shared_ptr<Departament>;
+
+class Company : public UnitWChildrenImpl<UnitKind::eCompany, Departament>
 {
 public:
-    Departament& getOrCreateDept(const std::string& deptName);
-
-private:
-    Departaments m_depts;
+    Company() : UnitWChildrenImpl("Наша фирма"){}
+    DepartamentPtr getOrCreateDept(const std::string& deptName);
+    void addChildReport(const std::string& report);
 };
 

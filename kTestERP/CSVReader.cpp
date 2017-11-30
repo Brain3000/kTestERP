@@ -78,7 +78,7 @@ void CSVReader::readFile(const std::string& fileName,
 		}
 		return;
 	}
-    Departament& dept(m_company.getOrCreateDept(deptName));
+    DepartamentPtr dept = m_company.getOrCreateDept(deptName);
     EmployerFactory factory(m_verbose);
     IdsMap idsMap;
 	int maxIdx(-1), strIdx(0), emplAdded(0);
@@ -118,12 +118,12 @@ void CSVReader::readFile(const std::string& fileName,
                       << strIdx << " имя сотрудника '" << name
                       << "', специальность '" << posAsText << "'\n";
         }
-        IEmployerPtr empl = factory.createEmployer(name, posAsText);
+        EmployerPtr empl = factory.createEmployer(name, posAsText, dept.get());
         if (m_verbose && empl) {
             std::cout << "Информация о сотруднике успешно создана\n";
         }
 
-        if (empl && dept.addEmployer(empl)) {
+        if (empl && dept->addEmployer(empl)) {
             ++emplAdded;
             if (m_verbose) {
                 std::cout << "Сотрудник " << name << " со специальностью "
@@ -135,9 +135,9 @@ void CSVReader::readFile(const std::string& fileName,
     if (m_verbose)
     {
         std::cout << "Обработано " << strIdx << " строк файла '"
-                  << fileName << "' добавлено " << emplAdded << " сотрудников в отдел '"
-                  << deptName << "', всего в отделе "
-                  << dept.getChild().size() << " сотрудников\n";
+            << fileName << "' добавлено " << emplAdded << " сотрудников в отдел '"
+            << deptName << std::endl; // "', всего в отделе "
+                  //<< dept.getChild().size() << " сотрудников\n";
     }
 }
 

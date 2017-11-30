@@ -22,11 +22,10 @@ public:
     virtual const Jobs& jobs() const noexcept = 0;
 };
 
-using IEmployerPtr = std::shared_ptr<IEmployer>;
+class Departament;
 
-//template<EmployerPosition P, Job... jobs>
-class Employer : public IEmployer,
-                 public UnitImpl<UnitKind::eEmployer> {
+class Employer : public UnitImpl<UnitKind::eEmployer>,
+                 public IEmployer {
 // IEmployer
 public:
     virtual EmployerPosition position() const noexcept
@@ -36,34 +35,30 @@ public:
 
 // IUnit
 public:
-    virtual bool doJob(Job job) const noexcept {
-        bool jobResult = m_jobs.find(job) != m_jobs.end();
-        assert(m_parent);
-        if (m_parent)
-            m_parent->addRepRecord(m_name + " работу " +
-                (jobResult ? "выполнил" : "не может выполнить"));
-    }
+    virtual bool doJob(Job job);
 
 public:
-    Employer(const std::string& name, IUnit* parent, EmployerPosition position) :
-        UnitImpl(name, parent), m_position(position) {}
+    Employer(const std::string& name, Departament* parent, EmployerPosition position) :
+        UnitImpl(name), m_position(position), m_parent(parent){}
 
 protected:
     Jobs m_jobs;
 
 private:
     EmployerPosition m_position;
+    Departament* m_parent;
 };
 
+using EmployerPtr = std::shared_ptr<Employer>;
 
 template<EmployerPosition P, Job... jobs>
 class EmployerImpl : public Employer {
 public:
-    EmployerImpl(const std::string& name, IUnit* parent) :
-    Employer(name, parent, P) {
-        m_jobs = { { jobs... } };
-        m_jobs.insert(Job::eCleaning);
-        m_jobs.insert(Job::eVacation);
+    EmployerImpl(const std::string& name, Departament* parent) :
+        Employer(name, parent, P) {
+            m_jobs = { { jobs... } };
+            m_jobs.insert(Job::eCleaning);
+            m_jobs.insert(Job::eVacation);
     }
 };
 
@@ -79,8 +74,9 @@ class EmployerFactory {
 public:
     EmployerFactory(bool verbose) noexcept : m_verbose(verbose)
         {}
-    IEmployerPtr createEmployer(const std::string& name,
-                                const std::string& positionAsText);
+    EmployerPtr createEmployer(const std::string& name,
+                               const std::string& positionAsText,
+                               Departament* parent);
 private:
     EmployerPosition textToPosition(const std::string& positionAsText);
 

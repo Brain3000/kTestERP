@@ -5,16 +5,24 @@
 #include <assert.h>
 
 #include "Departament.h"
+#include "Company.h"
 
-bool Departament::addEmployer(IEmployerPtr employer) {
+bool Departament::addEmployer(EmployerPtr employer) {
     assert(employer);
-    if (std::find_if(m_childs.begin(),
-                     m_childs.end(),
-                     EmployerEqual(static_cast<IEmployer*>(employer.get()))) != m_childs.end()) {
+    if (std::find_if(m_children.begin(),
+                     m_children.end(),
+                     EmployerEqual(employer)) != m_children.end()) {
         return false;
     }
-    m_childs.push_back(employer);
+    m_children.push_back(employer);
     return true;
+}
+
+void Departament::addChildReport(const std::string& record) {
+    m_report.push_back(record);
+    assert(m_parent);
+    if (m_parent)
+        m_parent->addChildReport(m_name + "->" + record);
 }
 
 //EmployersList&& Departament::getEmployers(EmployerPosition position) const {

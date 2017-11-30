@@ -8,20 +8,25 @@
 
 #include "Employer.h"
 
-class Departament : public UnitWithChildren<UnitKind::eDepartament>{
-    struct EmployerEqual : std::unary_function<IEmployer*, bool> {
-        EmployerEqual(const IUnit* val) : m_val(static_cast<const IEmployer*>(val)) {}
-        bool operator()(IUnitPtr u) const {
-            IEmployer* e = static_cast<IEmployer*>(u.get());
-            return (e->name() == m_val->name() && m_val->position() == e->position());
+class Company;
+
+class Departament : public UnitWChildrenImpl<UnitKind::eDepartament, Employer> {
+    struct EmployerEqual : std::unary_function<EmployerPtr, bool> {
+        EmployerEqual(const EmployerPtr val) : m_empl(val) {}
+        bool operator()(EmployerPtr e) const {
+            return (e->name() == m_empl->name() && m_empl->position() == e->position());
         }
-        const IEmployer* m_val;
+        const EmployerPtr m_empl;
     };
 
 public:
-    explicit Departament(std::string name) :
-        UnitImpl(name) {}
-    bool addEmployer(IEmployerPtr employer);
+    Departament(std::string name, Company* parent) :
+        UnitWChildrenImpl(name){}
+    bool addEmployer(EmployerPtr employer);
+    void addChildReport(const std::string& record);
+
+private:
+    Company* m_parent;
 };
 
-using Departaments = std::unordered_map<std::string, Departament>;
+//using Departaments = std::unordered_map<std::string, Departament>;

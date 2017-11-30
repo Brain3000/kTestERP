@@ -3,9 +3,6 @@
 
 #include "stdafx.h"
 
-#include <conio.h>
-
-#include <iostream>
 #include <boost/program_options.hpp>
 
 #include "MainUtil.h"
