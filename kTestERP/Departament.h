@@ -1,14 +1,15 @@
 #pragma once
 
-#include <string>
-#include <memory>
-#include <unordered_map>
-#include <list>
-#include <assert.h>
+#include <set>
 
 #include "Employer.h"
 
-using Employers = std::list<EmployerPtr>;
+struct EmployerLess : std::binary_function<EmployerPtr, EmployerPtr, bool> {
+    bool operator()(EmployerPtr e1, EmployerPtr e2) const {
+        return (e1->name() < e2->name() && e1->position() < e2->position());
+    }
+};
+using Employers = std::set<EmployerPtr, EmployerLess>;
 
 class Departament : public UnitWChildrenImpl<Employer, Employers> {
 public:
