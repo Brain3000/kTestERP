@@ -29,10 +29,11 @@ protected:
     const std::string m_name;
 };
 
-template<typename C, typename K, typename I>
+template<typename C, typename K>
 class UnitWChildrenImpl : public UnitImpl {
     using ChildPtr = std::shared_ptr<C>;
     using Children = K;
+    using Iterator = typename K::const_iterator;
 public:
     UnitWChildrenImpl(const std::string& name) :
         UnitImpl(name) {}
@@ -51,7 +52,7 @@ public:
         return jobResult;
     }
 protected:
-    virtual ChildPtr child(I it) const noexcept = 0;
+    virtual ChildPtr child(Iterator it) const noexcept = 0;
 
 protected:
     Children m_children;

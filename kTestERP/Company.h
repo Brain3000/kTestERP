@@ -7,7 +7,7 @@
 using DepartamentPtr = std::shared_ptr<Departament>;
 using Departaments = std::unordered_map<std::string, DepartamentPtr>;
 
-class Company : public UnitWChildrenImpl<Departament, Departaments, Departaments::const_iterator>
+class Company : public UnitWChildrenImpl<Departament, Departaments>
 {
 public:
     Company() : UnitWChildrenImpl("Наша фирма"){}

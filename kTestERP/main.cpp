@@ -63,9 +63,8 @@ int main(int argc, char** argv)
 
         if (vm.count(kInputCatalogParam))
         {
-            MainUtil mainUtil(vm.count(kVerboseOption));
             std::string catalog = vm["input-calalog"].as<std::string>();
-            mainUtil.loadDataFromDir(catalog);
+            MainUtil mainUtil(vm.count(kVerboseOption), catalog);
             mainUtil.run();
         }
         else

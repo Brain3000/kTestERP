@@ -10,7 +10,7 @@
 
 using Employers = std::list<EmployerPtr>;
 
-class Departament : public UnitWChildrenImpl<Employer, Employers, Employers::const_iterator> {
+class Departament : public UnitWChildrenImpl<Employer, Employers> {
 public:
     Departament(std::string name) :
         UnitWChildrenImpl(name){}
