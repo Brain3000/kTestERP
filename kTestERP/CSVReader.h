@@ -6,12 +6,12 @@
 #include <boost/tokenizer.hpp>
 #include <map>
 
-namespace b = boost;
-namespace sys = b::system;
-
+#include "EmployerFactory.h"
 #include "Company.h"
 
-namespace fs = boost::filesystem;
+namespace b = boost;
+namespace sys = b::system;
+namespace fs = b::filesystem;
 
 
 class CSVReader
@@ -28,7 +28,13 @@ private:
     void readFolder(const std::string& path);
 	void readFile(const std::string& fileName,
 				  const std::string& deptName);
-	IdsMap getIdsMap(const std::string& firstFileLine,
+
+    bool addEmployer(int strIdx,
+                     const std::string& name,
+                     const std::string& posAsText,
+                     Departament* dept);
+
+    IdsMap getIdsMap(const std::string& firstFileLine,
                      const std::string& fileName) noexcept;
 private:
     Company& m_company;
@@ -36,5 +42,6 @@ private:
     fs::path m_path;
     const b::char_separator<char> m_sep;
 	static const IdsMap s_idsMap;
+    EmployerFactory m_factory;
 };
 

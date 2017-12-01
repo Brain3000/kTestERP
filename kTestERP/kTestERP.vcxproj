@@ -154,8 +154,10 @@
     <ClInclude Include="Company.h" />
     <ClInclude Include="CSVReader.h" />
     <ClInclude Include="Employer.h" />
+    <ClInclude Include="EmployerFactory.h" />
     <ClInclude Include="ERPException.h" />
     <ClInclude Include="IUnit.h" />
+    <ClInclude Include="Job.h" />
     <ClInclude Include="MainUtil.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Departament.h" />
@@ -165,6 +167,8 @@
     <ClCompile Include="Company.cpp" />
     <ClCompile Include="CSVReader.cpp" />
     <ClCompile Include="Employer.cpp" />
+    <ClCompile Include="EmployerFactory.cpp" />
+    <ClCompile Include="Job.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainUtil.cpp" />
     <ClCompile Include="stdafx.cpp">

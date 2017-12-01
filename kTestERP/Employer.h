@@ -9,12 +9,15 @@
 #include "IUnit.h"
 
 enum class EmployerPosition {
-    eUnknown,
+//    eUnknown,
     eProgrammer,
     eWriter,
     eTester,
     eAccountant
 };
+
+const std::string& pos_to_str(EmployerPosition pos);
+EmployerPosition str_to_pos(const std::string& posAsStr);
 
 class IEmployer {
 public:    
@@ -64,19 +67,4 @@ using Writer = EmployerImpl<EmployerPosition::eWriter, Job::eTranslation>;
 using Tester = EmployerImpl<EmployerPosition::eWriter, Job::eTesting, Job::ePlaningTest>;
 using Accountant = EmployerImpl<EmployerPosition::eWriter, Job::ePaySallory, Job::eReporting>;
 
-//using EmployersMap = std::unordered_map<EmployerPosition, IEmployerPtr>;
-//using EmployersMapPair = EmployersMap::value_type;
-
-class EmployerFactory {
-public:
-    EmployerFactory(bool verbose) noexcept : m_verbose(verbose)
-        {}
-    EmployerPtr createEmployer(const std::string& name,
-                               const std::string& positionAsText);
-private:
-    EmployerPosition textToPosition(const std::string& positionAsText);
-
-private:
-    bool m_verbose;
-};
 

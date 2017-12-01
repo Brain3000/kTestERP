@@ -8,17 +8,13 @@
 
 #include "Employer.h"
 
-class Departament : public UnitWChildrenImpl<Employer> {
-    struct EmployerEqual : std::unary_function<EmployerPtr, bool> {
-        EmployerEqual(const EmployerPtr val) : m_empl(val) {}
-        bool operator()(EmployerPtr e) const {
-            return (e->name() == m_empl->name() && m_empl->position() == e->position());
-        }
-        const EmployerPtr m_empl;
-    };
+using Employers = std::list<EmployerPtr>;
 
+class Departament : public UnitWChildrenImpl<Employer, Employers, Employers::const_iterator> {
 public:
     Departament(std::string name) :
         UnitWChildrenImpl(name){}
     bool addEmployer(EmployerPtr employer);
+protected:
+    virtual EmployerPtr child(Employers::const_iterator it) const noexcept;
 };

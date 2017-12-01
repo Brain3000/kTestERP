@@ -22,7 +22,8 @@ const CSVReader::IdsMap CSVReader::s_idsMap {
 CSVReader::CSVReader(Company& company, const std::string path, bool verbose) :
     m_company(company),
     m_verbose(verbose),
-    m_sep(";", "", boost::keep_empty_tokens) {
+    m_sep(";", "", boost::keep_empty_tokens),
+    m_factory(verbose) {
     if (m_verbose) {
         std::cout << "Указан каталог с входными файлами: '"
                   << path << "'\n";
@@ -34,8 +35,6 @@ CSVReader::CSVReader(Company& company, const std::string path, bool verbose) :
 void CSVReader::readFolder(const std::string& path) {
     try {
         m_path = path;
-
-		//std::cout << fs::current_path().string() << std::endl;
 
         if (!fs::exists(m_path)) {
             throw ERPException("Путь '" + m_path.string() + "' не существует");
@@ -69,8 +68,6 @@ void CSVReader::readFile(const std::string& fileName,
 	}
 	// Закрывать поток не буду, бо сам закроется на диструкции
 	std::ifstream iStream(fileName);
-    //iStream.imbue(std::locale("ru_RU.CP1251"));
-    //iStream.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
     std::string buf;
 	if (!iStream.good()) {
 		if (m_verbose) {
@@ -79,13 +76,9 @@ void CSVReader::readFile(const std::string& fileName,
 		return;
 	}
     DepartamentPtr dept = m_company.getOrCreateDept(deptName);
-    EmployerFactory factory(m_verbose);
     IdsMap idsMap;
 	int maxIdx(-1), strIdx(0), emplAdded(0);
     
-    //using convert_type = std::codecvt_utf8<wchar_t>;
-    //static std::wstring_convert<convert_type, wchar_t> converter;
-
 	while (getline(iStream, buf)) {
 		++strIdx;
         //std::string buf = converter.to_bytes(wbuf);
@@ -113,32 +106,56 @@ void CSVReader::readFile(const std::string& fileName,
 		}
         const std::string name = *(std::next(tokenizer.begin(), idsMap[kNameId]));
         const std::string posAsText = *(std::next(tokenizer.begin(), idsMap[kPositionId]));
-        if (m_verbose) {
-            std::cout << "Попытка загрузить данные сотрудника из строки "
-                      << strIdx << " имя сотрудника '" << name
-                      << "', специальность '" << posAsText << "'\n";
-        }
-        EmployerPtr empl = factory.createEmployer(name, posAsText);
-        if (m_verbose && empl) {
-            std::cout << "Информация о сотруднике успешно создана\n";
-        }
-
-        if (empl && dept->addEmployer(empl)) {
+        if (addEmployer(strIdx, name, posAsText, dept.get())) {
             ++emplAdded;
-            if (m_verbose) {
-                std::cout << "Сотрудник " << name << " со специальностью "
-                          << posAsText << " успешно добавлен в отдел "
-                          << deptName << std::endl;
-            }
         }
-	}
+    }
     if (m_verbose)
     {
         std::cout << "Обработано " << strIdx << " строк файла '"
-            << fileName << "' добавлено " << emplAdded << " сотрудников в отдел '"
-            << deptName << std::endl; // "', всего в отделе "
-                  //<< dept.getChild().size() << " сотрудников\n";
+                  << fileName << "' добавлено " << emplAdded << " сотрудников в отдел '"
+                  << deptName << "'\n";
     }
+}
+
+bool CSVReader::addEmployer(int strIdx,
+                            const std::string& name,
+                            const std::string& posAsText,
+                            Departament* dept) {
+    if (m_verbose) {
+        std::cout << "Попытка загрузить данные сотрудника из строки "
+            << strIdx << " имя сотрудника '" << name
+            << "', специальность '" << posAsText << "'\n";
+    }
+    EmployerPtr empl = m_factory.createEmployer(name, posAsText);
+    if (!empl) {
+        if (m_verbose) {
+            std::cout << "Сотрудник со специальностью '"
+                      << posAsText << "' не был создан";
+        }
+        return false;
+    }
+    if (m_verbose) {
+        std::cout << "Информация о сотруднике успешно создана\n";
+    }
+
+    if (!dept->addEmployer(empl)) {
+        if (m_verbose) {
+            std::cout << "Сотрудник с именем '" << name
+                      << "' и должностью '" << posAsText
+                      << "' не добавлен в отдел '"
+                      << dept->name() << "' поскольку сотрудник "
+                      "с такой должностью и именем в отделе уже есть";
+        }
+        return false;
+    }
+
+    if (m_verbose) {
+        std::cout << "Сотрудник '" << name << "' со специальностью '"
+            << posAsText << "' успешно добавлен в отдел '"
+            << dept->name() << "'\n";
+    }
+    return true;
 }
 
 CSVReader::IdsMap CSVReader::getIdsMap(const std::string& firstFileLine,
