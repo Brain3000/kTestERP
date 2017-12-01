@@ -118,7 +118,7 @@ void CSVReader::readFile(const std::string& fileName,
                       << strIdx << " имя сотрудника '" << name
                       << "', специальность '" << posAsText << "'\n";
         }
-        EmployerPtr empl = factory.createEmployer(name, posAsText, dept.get());
+        EmployerPtr empl = factory.createEmployer(name, posAsText);
         if (m_verbose && empl) {
             std::cout << "Информация о сотруднике успешно создана\n";
         }

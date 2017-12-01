@@ -3,36 +3,30 @@
 #include <iostream>
 
 #include "Employer.h"
-#include "Departament.h"
 
-bool Employer::doJob(Job job) {
+bool Employer::doJob(Job job, StringList& report) {
     bool jobResult = m_jobs.find(job) != m_jobs.end();
-    // Отчет должен быть очищен
-    assert(m_report.empty());
-    m_report.emplace_back(name() + " работу " +
-        (jobResult ? "выполнил" : "не может выполнить"));
-    assert(m_parent);
-    if (m_parent) {
-        m_parent->addChildReport(m_report.back());
-    }
+    std::string msg = m_name;
+    msg.append(" работу ");
+    msg.append(jobResult ? "выполнил(а)" : "не может выполнить");
+    report.emplace_back(msg);
     return jobResult;
 }
 
 
 EmployerPtr EmployerFactory::createEmployer(const std::string& name,
-                                            const std::string& positionAsText,
-                                            Departament* parent) {
+                                            const std::string& positionAsText) {
     if (!name.empty()) {
         EmployerPosition pos = textToPosition(positionAsText);
         switch (pos) {
         case EmployerPosition::eProgrammer:
-            return std::make_shared<Programmer>(name, parent);
+            return std::make_shared<Programmer>(name);
         case EmployerPosition::eWriter:
-            return std::make_shared<Writer>(name, parent);
+            return std::make_shared<Writer>(name);
         case EmployerPosition::eTester:
-            return std::make_shared<Tester>(name, parent);
+            return std::make_shared<Tester>(name);
         case EmployerPosition::eAccountant:
-            return std::make_shared<Accountant>(name, parent);
+            return std::make_shared<Accountant>(name);
         default:
             if (m_verbose) {
                 std::cout << "Неизвестное название специальности: '"

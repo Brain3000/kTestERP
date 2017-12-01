@@ -8,9 +8,7 @@
 
 #include "Employer.h"
 
-class Company;
-
-class Departament : public UnitWChildrenImpl<UnitKind::eDepartament, Employer> {
+class Departament : public UnitWChildrenImpl<Employer> {
     struct EmployerEqual : std::unary_function<EmployerPtr, bool> {
         EmployerEqual(const EmployerPtr val) : m_empl(val) {}
         bool operator()(EmployerPtr e) const {
@@ -20,13 +18,7 @@ class Departament : public UnitWChildrenImpl<UnitKind::eDepartament, Employer> {
     };
 
 public:
-    Departament(std::string name, Company* parent) :
+    Departament(std::string name) :
         UnitWChildrenImpl(name){}
     bool addEmployer(EmployerPtr employer);
-    void addChildReport(const std::string& record);
-
-private:
-    Company* m_parent;
 };
-
-//using Departaments = std::unordered_map<std::string, Departament>;

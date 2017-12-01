@@ -22,109 +22,57 @@ enum class Job {
 
 using Jobs = std::unordered_set<Job>;
 
-enum class UnitKind
-{
-    eCompany,
-    eDepartament,
-    eEmployer,
-};
+//enum class UnitKind
+//{
+//    eCompany,
+//    eDepartament,
+//    eEmployer,
+//};
 
+using StringList = std::list<std::string>;
 
 class IUnit {
 public:
     virtual ~IUnit() {}
-    virtual bool doJob(Job job) = 0;
+    virtual bool doJob(Job job, StringList& report) = 0;
     virtual const std::string& name() const noexcept = 0;
-    virtual UnitKind kind() const noexcept = 0;
-    virtual void printReport() = 0;
-    virtual void clearReport() = 0;
+    //virtual UnitKind kind() const noexcept = 0;
 };
 
-using StringList = std::list<std::string>;
-
-template<UnitKind K>
 class UnitImpl : public IUnit {
-    static const size_t kRepRecordMaxCount = 20;
 public:
     UnitImpl(const std::string& name) : m_name(name)
         {}
-
-    virtual const std::string& name() const noexcept {
+    const std::string& name() const noexcept {
         return m_name;
     }
-
-    virtual UnitKind kind() const noexcept {
-        return K;
-    }
-
-    virtual void printReport() {
-        assert(!m_report.empty());
-        if (m_report.empty()) {
-            std::cout << m_name << " : действий не выполнялось\n";
-        }
-        size_t cnt(0);
-        for (const auto rep : m_report) {
-            if (cnt++ < kRepRecordMaxCount) {
-                std::cout << rep << std::endl;
-            }
-            else {
-                std::cout << "Вывести следующие записи? "
-                    "(любая кнопка для продолжения, 'n' для выхода)\n";
-                if (_getch() == 'n') {
-                    break;
-                }
-                cnt = 0;
-            }
-        }
-    }
-    virtual void clearReport() {
-        m_report.clear();
-    }
-
 protected:
     const std::string m_name;
-    StringList m_report;
 };
 
-template<UnitKind K, typename C>
-class UnitWChildrenImpl : public UnitImpl<K> {
+template<typename C>
+class UnitWChildrenImpl : public UnitImpl {
     using ChildPtr = std::shared_ptr<C>;
     using Children = std::list<ChildPtr>;
 public:
     UnitWChildrenImpl(const std::string& name) :
         UnitImpl(name) {}
-    virtual bool doJob(Job job) {
-        bool res(false);
-        clearReport();
+    virtual bool doJob(Job job, StringList& report) {
+        bool jobResult(false);
+        auto beginIt = report.begin();
         for (auto c : m_children) {
-            if (c->doJob(job) && !res) {
-                res = true;
+            if (c->doJob(job, report) && !jobResult) {
+                jobResult = true;
             }
         }
-        return res;
-    }
-    virtual void clearReport() noexcept {
-        for (auto c : m_children) {
-            c->clearReport();
-        }
+        std::string msg = m_name;
+        msg.append(" работу ");
+        msg.append(jobResult ? "выполнил(а)" : "выполнить не может");
+        report.emplace(beginIt, msg);
+        return jobResult;
     }
 
 protected:
     Children m_children;
-    StringList m_report;
 };
 
-//template<UnitKind K, typename P>
-//class UnitWParentImpl : public UnitImpl<K> {
-//public:
-//    UnitWParentImpl(const std::string& name, P* parent) :
-//        UnitImpl(name), m_parent(parent) {}
-//    virtual void addRepRecord(const std::string& record) {
-//        m_report.push_back(record);
-//        assert(m_parent);
-//        if (m_parent)
-//            m_parent->addChildReport(m_name + ": " + record);
-//    }
-//protected:
-//    P* m_parent;
-//};

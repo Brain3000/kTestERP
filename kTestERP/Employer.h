@@ -22,9 +22,7 @@ public:
     virtual const Jobs& jobs() const noexcept = 0;
 };
 
-class Departament;
-
-class Employer : public UnitImpl<UnitKind::eEmployer>,
+class Employer : public UnitImpl,
                  public IEmployer {
 // IEmployer
 public:
@@ -35,18 +33,17 @@ public:
 
 // IUnit
 public:
-    virtual bool doJob(Job job);
+    virtual bool doJob(Job job, StringList& report);
 
 public:
-    Employer(const std::string& name, Departament* parent, EmployerPosition position) :
-        UnitImpl(name), m_position(position), m_parent(parent){}
+    Employer(const std::string& name, EmployerPosition position) :
+        UnitImpl(name), m_position(position) {}
 
 protected:
     Jobs m_jobs;
 
 private:
     EmployerPosition m_position;
-    Departament* m_parent;
 };
 
 using EmployerPtr = std::shared_ptr<Employer>;
@@ -54,8 +51,8 @@ using EmployerPtr = std::shared_ptr<Employer>;
 template<EmployerPosition P, Job... jobs>
 class EmployerImpl : public Employer {
 public:
-    EmployerImpl(const std::string& name, Departament* parent) :
-        Employer(name, parent, P) {
+    EmployerImpl(const std::string& name) :
+        Employer(name, P) {
             m_jobs = { { jobs... } };
             m_jobs.insert(Job::eCleaning);
             m_jobs.insert(Job::eVacation);
@@ -75,8 +72,7 @@ public:
     EmployerFactory(bool verbose) noexcept : m_verbose(verbose)
         {}
     EmployerPtr createEmployer(const std::string& name,
-                               const std::string& positionAsText,
-                               Departament* parent);
+                               const std::string& positionAsText);
 private:
     EmployerPosition textToPosition(const std::string& positionAsText);
 
