@@ -34,7 +34,7 @@ using StringList = std::list<std::string>;
 class IUnit {
 public:
     virtual ~IUnit() {}
-    virtual bool doJob(Job job, StringList& report) = 0;
+    virtual bool doJob(Job job, StringList& report) const = 0;
     virtual const std::string& name() const noexcept = 0;
     //virtual UnitKind kind() const noexcept = 0;
 };
@@ -57,7 +57,7 @@ class UnitWChildrenImpl : public UnitImpl {
 public:
     UnitWChildrenImpl(const std::string& name) :
         UnitImpl(name) {}
-    virtual bool doJob(Job job, StringList& report) {
+    virtual bool doJob(Job job, StringList& report) const {
         bool jobResult(false);
         auto beginIt = report.begin();
         for (auto c : m_children) {

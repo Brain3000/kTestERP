@@ -4,7 +4,7 @@
 
 #include "Employer.h"
 
-bool Employer::doJob(Job job, StringList& report) {
+bool Employer::doJob(Job job, StringList& report) const {
     bool jobResult = m_jobs.find(job) != m_jobs.end();
     std::string msg = m_name;
     msg.append(" работу ");

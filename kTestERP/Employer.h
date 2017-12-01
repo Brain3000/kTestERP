@@ -33,7 +33,7 @@ public:
 
 // IUnit
 public:
-    virtual bool doJob(Job job, StringList& report);
+    virtual bool doJob(Job job, StringList& report) const;
 
 public:
     Employer(const std::string& name, EmployerPosition position) :
