@@ -23,16 +23,17 @@ EmployerPtr EmployerFactory::createEmployer(const std::string& name,
                 employer = std::make_shared<Accountant>(name);
                 break;
             default:
-                if (m_verbose) {
-                    std::cout << "Неизвестное название специальности: '"
-                        << positionAsText << "'\n";
-                }
+                assert(false);
                 break;
             }
         }
         catch (const std::out_of_range&) {
             // Просто задавим исключение,
             // и Employer останется пустым
+            if (m_verbose) {
+                std::cout << "Неизвестное название специальности: '"
+                    << positionAsText << "'\n";
+            }
         }
     }
     else if (m_verbose)

@@ -22,10 +22,10 @@ class CSVReader
                                    std::string::const_iterator,
                                    std::string>;
 public:
-    CSVReader(Company& company, const std::string path, bool verbose);
+    CSVReader(Company& company, const std::string& path, bool verbose);
 
 private:
-    void readFolder(const std::string& path);
+    void readFolder(const std::string& _path);
 	void readFile(const std::string& fileName,
 				  const std::string& deptName);
 
@@ -39,7 +39,6 @@ private:
 private:
     Company& m_company;
     bool m_verbose;
-    fs::path m_path;
     const b::char_separator<char> m_sep;
 	static const IdsMap s_idsMap;
     EmployerFactory m_factory;

@@ -19,35 +19,34 @@ const CSVReader::IdsMap CSVReader::s_idsMap {
 	{ kPositionId, -1 }
 };
 
-CSVReader::CSVReader(Company& company, const std::string path, bool verbose) :
+CSVReader::CSVReader(Company& company, const std::string& path, bool verbose) :
     m_company(company),
     m_verbose(verbose),
     m_sep(";", "", boost::keep_empty_tokens),
     m_factory(verbose) {
-    if (m_verbose) {
-        std::cout << "Указан каталог с входными файлами: '"
-                  << path << "'\n";
-    }
-
     readFolder(path);
 }
 
-void CSVReader::readFolder(const std::string& path) {
+void CSVReader::readFolder(const std::string& _path) {
     try {
-        m_path = path;
+        const fs::path path(fs::canonical(_path));
+        if (m_verbose) {
+            std::cout << "Указан каталог с входными файлами: '"
+                << path.string() << "'\n";
+        }
 
-        if (!fs::exists(m_path)) {
-            throw ERPException("Путь '" + m_path.string() + "' не существует");
+        if (!fs::exists(path)) {
+            throw ERPException("Путь '" + path.string() + "' не существует");
         }
-        if (!fs::is_directory(m_path)) {
-            throw ERPException("Путь '" + m_path.string() + " не является каталогом");
+        if (!fs::is_directory(path)) {
+            throw ERPException("Путь '" + path.string() + " не является каталогом");
         }
-        fs::perms perm = fs::status(m_path).permissions();
+        fs::perms perm = fs::status(path).permissions();
         if (!(perm & fs::perms::others_read)) {
-            throw ERPException("Каталог '" + m_path.string() + "' не имеет прав на чтение");
+            throw ERPException("Каталог '" + path.string() + "' не имеет прав на чтение");
         }
         fs::recursive_directory_iterator end_itr;
-        for (fs::recursive_directory_iterator itr(m_path); itr != end_itr; ++itr) {
+        for (fs::recursive_directory_iterator itr(path); itr != end_itr; ++itr) {
             // If it's not a directory, list it. If you want to list directories too, just remove this check.
             if (fs::is_regular_file(itr->path()) &&
                 itr->path().extension().string() == kCSVExtension) {
@@ -131,7 +130,7 @@ bool CSVReader::addEmployer(int strIdx,
     if (!empl) {
         if (m_verbose) {
             std::cout << "Сотрудник со специальностью '"
-                      << posAsText << "' не был создан";
+                      << posAsText << "' не был создан\n";
         }
         return false;
     }
@@ -145,7 +144,7 @@ bool CSVReader::addEmployer(int strIdx,
                       << "' и должностью '" << posAsText
                       << "' не добавлен в отдел '"
                       << dept->name() << "' поскольку сотрудник "
-                      "с такой должностью и именем в отделе уже есть";
+                      "с такой должностью и именем в отделе уже есть\n";
         }
         return false;
     }

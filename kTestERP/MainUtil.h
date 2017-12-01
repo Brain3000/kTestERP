@@ -6,7 +6,7 @@ class MainUtil
 {
 public:
     MainUtil(bool verbose) : m_verbose(verbose) {}
-    void loadDataFromDir(const std::string csvFolder);
+    void loadDataFromDir(const std::string& csvFolder);
     void run();
 
 private:
