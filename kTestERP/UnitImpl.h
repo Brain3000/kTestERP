@@ -18,8 +18,8 @@ public:
     }
 
 protected:
-    const std::string m_name;
-    const UnitKind m_kind;
+    std::string m_name;
+    UnitKind m_kind;
 };
 
 template<typename U, typename C, UnitKind K>

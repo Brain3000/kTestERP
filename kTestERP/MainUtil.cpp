@@ -14,9 +14,11 @@ MainUtil::MainUtil(bool verbose, const std::string& csvFolder) :
 }
 
 void MainUtil::loadDataFromDir() {
-    CSVReader(m_company, m_csvFolder, m_verbose);
+    Company company;
+    CSVReader(company, m_csvFolder, m_verbose);
     std::cout << "Загрузка данных завершена. Нажмите на любую клавишу для продолжения.\n";
     _getch();
+    std::swap(company, m_company);
 }
 
 void MainUtil::run() {
