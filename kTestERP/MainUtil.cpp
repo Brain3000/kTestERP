@@ -1,6 +1,9 @@
 #include "stdafx.h"
 
 #include <memory>
+#include <ctime>
+#include <iomanip>
+#include <sstream>
 
 #include "MainUtil.h"
 
@@ -28,4 +31,25 @@ void MainUtil::run() {
     ////                                                &mainPage,
     ////                                                "Загрузить csv-файлы", '1'));
     //mainPage.run();
+}
+
+void MainUtil::doJob(Job job, const IUnit* unit) {
+    StringList report;
+    bool res = unit->doJob(job, report);
+    //std::time_t t = std::time(nullptr);
+    //std::stringstream buffer;
+    //struct tm buf;
+    //localtime_s(&t, &buf);
+    //buffer << std::put_time(buf, "%c %Z '");
+    //std::string msg = buffer.str();
+    // Тут должен стоять "сотрудник/отдел/фирма"
+    std::string msg = "Сотруднику '";
+    msg.append(unit->name());
+    msg.append("' поручена работа: ");
+    msg.append(job_to_str(job));
+    msg.append("\nРабота ");
+    if (!res)
+        msg.append("не ");
+    msg.append("выполнена");
+    m_report.emplace_back(msg, report);
 }
