@@ -16,6 +16,5 @@ public:
     Departament(std::string name) :
         UnitWChildrenImpl(name){}
     bool addEmployer(EmployerPtr employer);
-protected:
     virtual EmployerPtr child(Employers::const_iterator it) const noexcept;
 };

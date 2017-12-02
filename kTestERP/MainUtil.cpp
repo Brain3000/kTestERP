@@ -4,10 +4,26 @@
 #include <ctime>
 #include <iomanip>
 #include <sstream>
+#include <conio.h>
+#include <windows.h>
 
 #include "MainUtil.h"
 
 #include "MainMenu.h"
+
+uint8_t get_code() {
+    SetConsoleCP(1251);// установка кодовой страницы win-cp 1251 в поток ввода
+    char code = _getch();
+    SetConsoleCP(866);// установка кодовой страницы cp 866 в поток ввода
+    if (code >= 'а' && code <= 'я') {
+        code -= 'а' - 'А';
+    }
+    if (code >= 'a' && code <= 'z') {
+        code -= 'a' - 'A';
+    }
+    return code;
+}
+
 
 MainUtil::MainUtil(bool verbose, const std::string& csvFolder) :
     m_csvFolder(csvFolder), m_verbose(verbose) {
@@ -17,7 +33,7 @@ void MainUtil::loadDataFromDir() {
     Company company;
     CSVReader(company, m_csvFolder, m_verbose);
     std::cout << "Загрузка данных завершена. Нажмите на любую клавишу для продолжения.\n";
-    _getch();
+    get_code();
     std::swap(company, m_company);
 }
 
@@ -37,15 +53,31 @@ void MainUtil::doJob(Job job, const IUnit* unit) {
     //buffer << std::put_time(buf, "%c %Z '");
     //std::string msg = buffer.str();
     // Тут должен стоять "сотрудник/отдел/фирма"
-    assert(!"Тут должно быть дата/время строкой");
-    std::string msg = kind_to_str(unit->kind());
-    msg.append("'");
+    //assert(!"Тут должно быть дата/время строкой");
+    std::string msg = "Отчет о выполнении работы от структурной единицы: ";
+    msg.append(kind_to_str(unit->kind()));
+    msg.append(" '");
     msg.append(unit->name());
-    msg.append("' поручена работа: ");
+    msg.append("'\nПорученная работа: ");
     msg.append(job_to_str(job));
     msg.append("\nРабота ");
     if (!res)
         msg.append("не ");
     msg.append("выполнена");
     m_report.emplace_back(msg, report);
+}
+
+void MainUtil::showLastReport() const {
+    system("cls");
+    if (m_report.empty()) {
+        std::cout << "Отчетов нет\n";
+    }
+    else {
+        std::cout << m_report.back().first << std::endl;
+        const StringList& lst = m_report.back().second;
+        for (auto s : lst) {
+            std::cout << s << std::endl;
+        }
+    }
+
 }

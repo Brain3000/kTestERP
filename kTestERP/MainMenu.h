@@ -9,5 +9,9 @@ public:
 
 protected:
     virtual void runOption(const Option& opt);
+
+private:
+    void taskToCompany(const MenuBase::Option & opt);
+
 };
 

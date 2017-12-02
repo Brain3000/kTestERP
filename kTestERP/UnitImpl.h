@@ -24,30 +24,41 @@ protected:
 
 template<typename U, typename C, UnitKind K>
 class UnitWChildrenImpl : public UnitImpl {
+public:
     using ChildPtr = std::shared_ptr<U>;
     using Children = C;
     using Iterator = typename C::const_iterator;
-public:
+
     UnitWChildrenImpl(const std::string& name) :
         UnitImpl(name, K) {}
-    virtual bool doJob(Job job, StringList& report) const {
-        bool jobResult(false);
-        auto beginIt = report.begin();
-        for (auto it = m_children.begin(); it != m_children.end(); ++it) {
-            if (child(it)->doJob(job, report) && !jobResult) {
-                jobResult = true;
-            }
-        }
-        std::string msg = m_name;
-        msg.append(" работу ");
-        msg.append(jobResult ? "выполнил(а)" : "выполнить не может");
-        report.emplace(beginIt, msg);
-        return jobResult;
-    }
-protected:
+    virtual bool doJob(Job job, StringList& report) const;
     virtual ChildPtr child(Iterator it) const noexcept = 0;
+    const Children& getChildren() const noexcept {
+        return m_children;
+    }
 
 protected:
     Children m_children;
 };
 
+
+template<typename U, typename C, UnitKind K>
+bool UnitWChildrenImpl<U, C, K>::doJob(Job job, StringList& report) const {
+    std::string msg = m_name;
+    msg.append(" работу ");
+    if (m_children.empty()) {
+        msg.append("выполнить не может, поскольку отсутствуют подчиненные структурные единицы");
+        report.push_back(msg);
+        return false;
+    }
+
+    bool jobResult(false);
+    for (auto it = m_children.begin(); it != m_children.end(); ++it) {
+        if (child(it)->doJob(job, report) && !jobResult) {
+            jobResult = true;
+        }
+    }
+    msg.append(jobResult ? "выполнил(а)" : "выполнить не может");
+    report.push_back(msg);
+    return jobResult;
+}

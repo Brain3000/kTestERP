@@ -18,6 +18,7 @@ enum class Job {
 };
 
 const std::string job_to_str(Job job);
+Job str_to_job(const std::string& jobName);
 
 using Jobs = std::unordered_set<Job>;
 

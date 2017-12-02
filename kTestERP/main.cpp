@@ -19,7 +19,7 @@ int main(int argc, char** argv)
 {
     try
     {
-        setlocale(LC_ALL, "Russian");
+        setlocale(LC_ALL, "rus");
         po::options_description options("Доступные параметры");
         options.add_options()
             ("help,h", "вывод подсказки")                                   // Опция помощи
@@ -47,7 +47,7 @@ int main(int argc, char** argv)
         {
             std::cout << options << std::endl;
 #ifdef _DEBUG
-            _getch();
+            get_code();
 #endif
             return 0;
         }
@@ -56,7 +56,7 @@ int main(int argc, char** argv)
         {
             std::cout << "Test ERP 1.0" << std::endl;
 #ifdef _DEBUG
-            _getch();
+            get_code();
 #endif
             return 0;
         }
@@ -75,7 +75,7 @@ int main(int argc, char** argv)
     catch (std::exception& e) {
         std::cerr << "Ошибка: " << e.what() << std::endl;
 #ifdef _DEBUG
-        _getch();
+        get_code();
 #endif
         return 1;
     }

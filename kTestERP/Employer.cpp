@@ -9,7 +9,7 @@
 using PosStrMap = std::unordered_map<EmployerPosition, std::string>;
 using StrPosMap = std::unordered_map<std::string, EmployerPosition>;
 
-const PosStrMap& getPosStrMap() {
+const PosStrMap& get_job_str_map() {
     static const PosStrMap s_posStrMap = {
         { EmployerPosition::eProgrammer, "Разработчик" },
         { EmployerPosition::eWriter, "Писатель", },
@@ -26,14 +26,14 @@ const PosStrMap& getPosStrMap() {
 }
 
 const std::string& pos_to_str(EmployerPosition pos) {
-    return getPosStrMap().at(pos);
+    return get_job_str_map().at(pos);
 }
 
 
 EmployerPosition str_to_pos(const std::string& posAsStr) {
     static StrPosMap s_strPosMap;
     if (s_strPosMap.empty()) {
-        const PosStrMap& posStrMap(getPosStrMap());
+        const PosStrMap& posStrMap(get_job_str_map());
         std::transform(posStrMap.begin(),
                        posStrMap.end(),
                        std::inserter(s_strPosMap, s_strPosMap.begin()),

@@ -6,21 +6,26 @@
 
 class MainUtil;
 
+const std::string kEmptyString;
+
 class MenuBase {
 protected:
     enum class OptionAction {
         eExit,
         eRunItem,
         eRunItemAndExit,
+        eInputString,
     };
 
     struct Option {
-        Option(const std::string& cap, uint8_t keyCode, OptionAction action);
+        Option(const std::string& cap, uint8_t keyCode,
+               OptionAction action, const std::string& addParam = kEmptyString);
         void show();
 
         const std::string m_caption;
         const uint8_t m_keyCode = ' ';
         const OptionAction m_action;
+        const std::string m_additionalParam;
 
     private:
         std::string printableKey() const;
@@ -36,16 +41,23 @@ protected:
 public:
     virtual ~MenuBase(){}
     void run();
-    const MainUtil* mainUtil() const;
+    const MainUtil* mainUtil() const noexcept {
+        return m_mainUtil;
+    }
+    const std::string& resultString() const noexcept {
+        return m_resultString;
+    }
 
 protected:
     MenuBase(MainUtil* mainUtil, const std::string& caption);
     //void addOption(const MenuOption& option);
     virtual void runOption(const Option& opt) = 0;
+    void inputString(const Option& opt);
 
 protected:
     MainUtil* m_mainUtil;
     const std::string m_caption;
     Options m_options;
+    std::string m_resultString;
 };
 

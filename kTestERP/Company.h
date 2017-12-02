@@ -12,8 +12,6 @@ class Company : public UnitWChildrenImpl<Departament, Departaments, UnitKind::eC
 public:
     Company() : UnitWChildrenImpl("Наша фирма"){}
     DepartamentPtr getOrCreateDept(const std::string& deptName);
-
-protected:
     DepartamentPtr child(Departaments::const_iterator it) const noexcept;
 };
 
