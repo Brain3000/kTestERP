@@ -43,7 +43,8 @@ void MainUtil::doJob(Job job, const IUnit* unit) {
     //buffer << std::put_time(buf, "%c %Z '");
     //std::string msg = buffer.str();
     // Тут должен стоять "сотрудник/отдел/фирма"
-    std::string msg = "Сотруднику '";
+    std::string msg = kind_to_str(unit->kind());
+    msg.append("'");
     msg.append(unit->name());
     msg.append("' поручена работа: ");
     msg.append(job_to_str(job));

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include  <iterator>
+#include  <algorithm>
 
 #include "Employer.h"
 

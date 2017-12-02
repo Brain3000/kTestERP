@@ -6,7 +6,7 @@
 #include <list>
 #include <assert.h>
 
-#include "IUnit.h"
+#include "UnitImpl.h"
 
 enum class EmployerPosition {
 //    eUnknown,
@@ -40,7 +40,7 @@ public:
 
 public:
     Employer(const std::string& name, EmployerPosition position) :
-        UnitImpl(name), m_position(position) {}
+        UnitImpl(name, UnitKind::eEmployer), m_position(position) {}
 
 protected:
     Jobs m_jobs;

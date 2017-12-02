@@ -11,7 +11,7 @@ struct EmployerLess : std::binary_function<EmployerPtr, EmployerPtr, bool> {
 };
 using Employers = std::set<EmployerPtr, EmployerLess>;
 
-class Departament : public UnitWChildrenImpl<Employer, Employers> {
+class Departament : public UnitWChildrenImpl<Employer, Employers, UnitKind::eDepartament> {
 public:
     Departament(std::string name) :
         UnitWChildrenImpl(name){}
