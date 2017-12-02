@@ -4,6 +4,7 @@
 #include  <algorithm>
 
 #include "Employer.h"
+#include "EnumImpl.h"
 
 using PosStrMap = std::unordered_map<EmployerPosition, std::string>;
 using StrPosMap = std::unordered_map<std::string, EmployerPosition>;
@@ -15,6 +16,12 @@ const PosStrMap& getPosStrMap() {
         { EmployerPosition::eTester, "Тестер" },
         { EmployerPosition::eAccountant, "Бухгалтер" },
     };
+#ifdef _DEBUG
+    for (auto e : EnumImpl<EmployerPosition>()) {
+        assert(s_posStrMap.find(e) != s_posStrMap.end());
+    }
+#endif // _DEBUG
+
     return s_posStrMap;
 }
 

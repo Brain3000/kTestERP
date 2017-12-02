@@ -9,8 +9,9 @@ class MainUtil;
 class MenuBase {
 protected:
     enum class OptionAction {
-        eGoBack,
+        eExit,
         eRunItem,
+        eRunItemAndExit,
     };
 
     struct Option {
@@ -34,13 +35,13 @@ protected:
     using Options = std::set<Option, OptionLess>;
 public:
     virtual ~MenuBase(){}
-    void run() const;
+    void run();
     const MainUtil* mainUtil() const;
 
 protected:
     MenuBase(MainUtil* mainUtil, const std::string& caption);
     //void addOption(const MenuOption& option);
-    virtual void runOption(const Option& opt) const = 0;
+    virtual void runOption(const Option& opt) = 0;
 
 protected:
     MainUtil* m_mainUtil;

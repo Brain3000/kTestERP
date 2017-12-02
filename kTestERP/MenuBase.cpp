@@ -47,14 +47,14 @@ std::string MenuBase::Option::printableKey() const {
 MenuBase::MenuBase(MainUtil* mainUtil, const std::string& caption) :
            m_mainUtil(mainUtil),
            m_caption(caption) {
-    m_options.emplace("Выход", 'q', OptionAction::eGoBack);
+    m_options.emplace("Выход", 'q', OptionAction::eExit);
 }
 
 const MainUtil* MenuBase::mainUtil() const {
     return m_mainUtil;
 }
 
-void MenuBase::run() const {
+void MenuBase::run() {
     bool exit(false);
     bool showOptions(true);
     while (!exit) {
@@ -76,12 +76,14 @@ void MenuBase::run() const {
         });
         if (it != m_options.end()) {
             switch (it->m_action) {
+            case OptionAction::eRunItemAndExit:
+                exit = true;
             case OptionAction::eRunItem:
                 runOption(*it);
                 break;
             default:
                 assert(!"Забыли какой-то OptionAction");
-            case OptionAction::eGoBack:
+            case OptionAction::eExit:
                 exit = true;
                 break;
             }

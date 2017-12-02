@@ -2,14 +2,15 @@
 
 // https://stackoverflow.com/questions/8498300/allow-for-range-based-for-with-enum-classes
 
-template< typename T, T First, T Last >
+template< typename T>
 class EnumImpl
 {
 public:
+    using InternalType = std::underlying_type_t<T>;
     class Iterator
     {
     public:
-        Iterator(std::underlying_type_t<T> value) :
+        Iterator(InternalType value) :
             m_value(value)
         { }
 
@@ -30,19 +31,19 @@ public:
         }
 
     private:
-        std::underlying_type_t<T>  m_value;
+        InternalType  m_value;
     };
 
 };
 
-template< typename T, T First, T Last>
-typename EnumImpl<T, First, Last>::Iterator begin(EnumImpl<T, First, Last>)
+template<typename T>
+typename EnumImpl<T>::Iterator begin(EnumImpl<T>)
 {
-    return typename EnumImpl<T, First, Last>::Iterator(std::underlying_type_t<T>(First));
+    return typename EnumImpl<T>::Iterator(EnumImpl<T>::InternalType(T::eFirst));
 }
 
-template< typename T, T First, T Last >
-typename EnumImpl<T, First, Last>::Iterator end(EnumImpl<T, First, Last>)
+template<typename T>
+typename EnumImpl<T>::Iterator end(EnumImpl<T>)
 {
-    return typename EnumImpl<T, First, Last>::Iterator(std::underlying_type_t<T>(Last) + 1);
+    return typename EnumImpl<T>::Iterator(EnumImpl<T>::InternalType(T::eLast) + 1);
 }

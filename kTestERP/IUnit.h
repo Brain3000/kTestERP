@@ -4,13 +4,17 @@
 #include <string>
 #include <iostream>
 #include <conio.h>
+#include <assert.h>
 
 #include "Job.h"
 
 enum class UnitKind {
     eCompany,
     eDepartament,
-    eEmployer
+    eEmployer,
+
+    eFirst = eCompany,
+    eLast = eEmployer,
 };
 
 using StringList = std::list<std::string>;

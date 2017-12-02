@@ -9,11 +9,12 @@
 #include "UnitImpl.h"
 
 enum class EmployerPosition {
-//    eUnknown,
     eProgrammer,
     eWriter,
     eTester,
-    eAccountant
+    eAccountant,
+    eFirst = eProgrammer,
+    eLast = eAccountant,
 };
 
 const std::string& pos_to_str(EmployerPosition pos);

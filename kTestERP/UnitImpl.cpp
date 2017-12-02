@@ -6,9 +6,9 @@
 const std::string& kind_to_str(UnitKind kind) {
     using UnitKindMap = std::unordered_map<UnitKind, std::string>;
     static const UnitKindMap map = {
-        {UnitKind::eCompany, "Компания"},
-        {UnitKind::eDepartament, "Подразделение"},
-        {UnitKind::eEmployer, "Сотрудник"},
+        {UnitKind::eCompany, "Компании"},
+        {UnitKind::eDepartament, "Подразделению"},
+        {UnitKind::eEmployer, "Сотруднику"},
     };
     return map.at(kind);
 }

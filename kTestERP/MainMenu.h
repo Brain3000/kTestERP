@@ -8,6 +8,6 @@ public:
     MainMenu(MainUtil* mainUtil);
 
 protected:
-    virtual void runOption(const Option& opt) const;
+    virtual void runOption(const Option& opt);
 };
 

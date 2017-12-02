@@ -12,6 +12,9 @@ enum class Job {
     eReporting,
     eVacation,
     eCleaning,
+
+    eFirst = eProgramming,
+    eLast = eCleaning,
 };
 
 const std::string job_to_str(Job job);

@@ -16,8 +16,14 @@ MainMenu::MainMenu(MainUtil* mainUtil) :
     m_options.insert(options.begin(), options.end());
 }
 
-void MainMenu::runOption(const Option& opt) const
+void MainMenu::runOption(const Option& opt)
 {
+    using UnitKindMap = std::unordered_map<uint8_t, UnitKind>;
+    UnitKindMap uninKindMap = {
+        {'2', UnitKind::eCompany},
+        {'3', UnitKind::eDepartament},
+        {'4', UnitKind::eEmployer},
+    };
     switch (opt.m_keyCode) {
     case '1':
         m_mainUtil->loadDataFromDir();
@@ -26,10 +32,12 @@ void MainMenu::runOption(const Option& opt) const
     case '3':
     case '4':
         {
-        ChoiceJobMenu choiceMenu(m_mainUtil, "Something");
+        ChoiceJobMenu choiceMenu(m_mainUtil, kind_to_str(uninKindMap.at(opt.m_keyCode)));
         choiceMenu.run();
         }
         break;
+    case '5':
+        assert(!"Еще не сделано");
     default:
         assert(!"Необработанная опция");
     };

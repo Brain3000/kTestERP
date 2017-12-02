@@ -25,13 +25,6 @@ void MainUtil::run() {
     loadDataFromDir();
     MainMenu mainMenu(this);
     mainMenu.run();
-    //MenuBase mainPage(this, "Главная страница\nВыберете один из пунктов меню:");
-    //mainPage.addOption(MenuOption("Загрузить csv-файлы", '1', MenuOptionAction::eRunItem));
-    //mainPage.addOption(MenuOption("Поставить задачу всей фирме", '2', MenuOptionAction::eRunItem));
-    //mainPage.addOption(MenuOption("Поставить задачу отделу", '3', MenuOptionAction::eRunItem));
-    //mainPage.addOption(MenuOption("Поставить задачу сотруднику", '4', MenuOptionAction::eRunItem));
-    //mainPage.addOption(MenuOption("Посмотреть последний отчет", '5', MenuOptionAction::eRunItem));
-    //mainPage.run();
 }
 
 void MainUtil::doJob(Job job, const IUnit* unit) {
