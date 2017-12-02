@@ -7,7 +7,7 @@
 
 #include "MainUtil.h"
 
-#include "Menu.h"
+#include "MainMenu.h"
 
 MainUtil::MainUtil(bool verbose, const std::string& csvFolder) :
     m_csvFolder(csvFolder), m_verbose(verbose) {
@@ -15,27 +15,20 @@ MainUtil::MainUtil(bool verbose, const std::string& csvFolder) :
 
 void MainUtil::loadDataFromDir() {
     CSVReader(m_company, m_csvFolder, m_verbose);
+    std::cout << "Загрузка данных завершена. Нажмите на любую клавишу для продолжения.\n";
+    _getch();
 }
 
 void MainUtil::run() {
     loadDataFromDir();
-    std::cout << "Загрузка данных завершена. Нажмите на любую клавишу для продолжения.\n";
-    _getch();
-    Page mainPage(this, "Главная страница\nВыберете один из пунктов меню:");
-    mainPage.addOption(MenuOption("Загрузить csv-файлы", '1', MenuOptionAction::eShowPage));
-    mainPage.addOption(MenuOption("Поставить задачу всей фирме", '2', MenuOptionAction::eShowPage));
-    mainPage.addOption(MenuOption("Поставить задачу отделу", '3', MenuOptionAction::eShowPage));
-    mainPage.addOption(MenuOption("Поставить задачу сотруднику", '4', MenuOptionAction::eShowPage));
-    mainPage.addOption(MenuOption("Посмотреть последний отчет", '5', MenuOptionAction::eShowPage));
-    mainPage.run();
-    //std::shared_ptr<MenuOptionBase> opt =
-    //    std::make_shared<MenuOption>(&MainUtil::loadDataFromDir,
-    //                                 &mainPage,
-    //                                 "Загрузить csv-файлы", '1');
-    //mainPage.addOption(opt);
-    ////mainPage.addOption(std::make_shared<MenuOption>(&MainUtil::loadDataFromDir,
-    ////                                                &mainPage,
-    ////                                                "Загрузить csv-файлы", '1'));
+    MainMenu mainMenu(this);
+    mainMenu.run();
+    //MenuBase mainPage(this, "Главная страница\nВыберете один из пунктов меню:");
+    //mainPage.addOption(MenuOption("Загрузить csv-файлы", '1', MenuOptionAction::eRunItem));
+    //mainPage.addOption(MenuOption("Поставить задачу всей фирме", '2', MenuOptionAction::eRunItem));
+    //mainPage.addOption(MenuOption("Поставить задачу отделу", '3', MenuOptionAction::eRunItem));
+    //mainPage.addOption(MenuOption("Поставить задачу сотруднику", '4', MenuOptionAction::eRunItem));
+    //mainPage.addOption(MenuOption("Посмотреть последний отчет", '5', MenuOptionAction::eRunItem));
     //mainPage.run();
 }
 
@@ -49,6 +42,7 @@ void MainUtil::doJob(Job job, const IUnit* unit) {
     //buffer << std::put_time(buf, "%c %Z '");
     //std::string msg = buffer.str();
     // Тут должен стоять "сотрудник/отдел/фирма"
+    assert(!"Тут должно быть дата/время строкой");
     std::string msg = kind_to_str(unit->kind());
     msg.append("'");
     msg.append(unit->name());

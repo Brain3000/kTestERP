@@ -1,23 +1,25 @@
 #include "stdafx.h"
 
-#include <stdlib.h>
+#include <conio.h>
+#include <iostream>
+#include <algorithm>
+#include <assert.h>
 
-#include "Menu.h"
-#include "MainUtil.h"
+#include "MenuBase.h"
 
-MenuOption::MenuOption(const std::string& cap,
-                       uint8_t keyCode,
-                       MenuOptionAction action) :
+MenuBase::Option::Option(const std::string& cap,
+                         uint8_t keyCode,
+                         OptionAction action) :
     m_caption(cap),
     m_keyCode(keyCode),
     m_action(action)
     {}
 
-void MenuOption::show() {
+void MenuBase::Option::show() {
     std::cout << "[" << printableKey() << "] " << m_caption << std::endl;
 }
 
-std::string MenuOption::printableKey() const {
+std::string MenuBase::Option::printableKey() const {
     std::string res(1, m_keyCode);
     switch (m_keyCode)
     {
@@ -42,21 +44,17 @@ std::string MenuOption::printableKey() const {
     return res;
 }
 
-Page::Page(MainUtil* mainUtil, const std::string& caption) :
+MenuBase::MenuBase(MainUtil* mainUtil, const std::string& caption) :
            m_mainUtil(mainUtil),
            m_caption(caption) {
-    m_options.emplace_back("Выход", 'q', MenuOptionAction::eGoBack);
+    m_options.emplace("Выход", 'q', OptionAction::eGoBack);
 }
 
-void Page::addOption(const MenuOption& option) {
-    m_options.push_back(option);
-}
-
-const MainUtil* Page::mainUtil() const {
+const MainUtil* MenuBase::mainUtil() const {
     return m_mainUtil;
 }
 
-void Page::run() const {
+void MenuBase::run() const {
     bool exit(false);
     bool showOptions(true);
     while (!exit) {
@@ -78,12 +76,12 @@ void Page::run() const {
         });
         if (it != m_options.end()) {
             switch (it->m_action) {
-            case MenuOptionAction::eShowPage:
-                assert(false);
+            case OptionAction::eRunItem:
+                runOption(*it);
                 break;
             default:
-                assert(false);
-            case MenuOptionAction::eGoBack:
+                assert(!"Забыли какой-то OptionAction");
+            case OptionAction::eGoBack:
                 exit = true;
                 break;
             }
