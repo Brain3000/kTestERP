@@ -83,8 +83,5 @@ int main(int argc, char** argv)
         std::cerr << "Исключение неизвестного типа!\n";
         return 1;
     }
-#ifdef _DEBUG
-    _getch();
-#endif
     return 0;
 }

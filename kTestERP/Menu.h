@@ -4,48 +4,34 @@
 #include <list>
 #include <memory>
 
-class Page;
+enum class MenuOptionAction {
+    eGoBack,
+    eShowPage,
+//    eExit
+};
 
-class MenuOptionBase {
-protected:
-    MenuOptionBase(Page* page, const std::string& cap, uint8_t keyCode);
+struct MenuOption {
+    MenuOption(const std::string& cap, uint8_t keyCode, MenuOptionAction action);
+    void show();
 
-public:
-    virtual ~MenuOptionBase();
-    virtual void show();
+    const std::string m_caption;
+    const uint8_t m_keyCode = ' ';
+    const MenuOptionAction m_action;
 
 private:
     std::string printableKey() const;
 
-private:
-    Page* m_page;
-    const std::string m_caption;
-    const uint8_t m_keyCode = ' ';
 };
 
 class MainUtil;
 
-class MenuOption : public MenuOptionBase {
-    using FuncType = void(MainUtil::*)();
-public:
-    explicit MenuOption(const FuncType func,
-                        Page* page,
-                        const std::string& cap,
-                        uint8_t keyCode);
-    ~MenuOption();
-private:
-    const FuncType m_func;
-};
-
-using OptionPtr = std::shared_ptr<MenuOptionBase>;
-using Options = std::list<OptionPtr>;
+using Options = std::list<MenuOption>;
 
 class Page
 {
 public:
     Page(MainUtil* mainUtil, const std::string& caption);
-    ~Page();
-    void addOption(OptionPtr option);
+    void addOption(const MenuOption& option);
     const MainUtil* mainUtil() const;
     void run() const;
 

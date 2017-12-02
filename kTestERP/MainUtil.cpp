@@ -21,7 +21,13 @@ void MainUtil::run() {
     loadDataFromDir();
     std::cout << "Загрузка данных завершена. Нажмите на любую клавишу для продолжения.\n";
     _getch();
-    //Page mainPage(this, "Главная страница\nВыберете один из пунктов меню:");
+    Page mainPage(this, "Главная страница\nВыберете один из пунктов меню:");
+    mainPage.addOption(MenuOption("Загрузить csv-файлы", '1', MenuOptionAction::eShowPage));
+    mainPage.addOption(MenuOption("Поставить задачу всей фирме", '2', MenuOptionAction::eShowPage));
+    mainPage.addOption(MenuOption("Поставить задачу отделу", '3', MenuOptionAction::eShowPage));
+    mainPage.addOption(MenuOption("Поставить задачу сотруднику", '4', MenuOptionAction::eShowPage));
+    mainPage.addOption(MenuOption("Посмотреть последний отчет", '5', MenuOptionAction::eShowPage));
+    mainPage.run();
     //std::shared_ptr<MenuOptionBase> opt =
     //    std::make_shared<MenuOption>(&MainUtil::loadDataFromDir,
     //                                 &mainPage,

@@ -5,25 +5,19 @@
 #include "Menu.h"
 #include "MainUtil.h"
 
-MenuOptionBase::MenuOptionBase(Page* page,
-                               const std::string& cap,
-                               uint8_t keyCode) :
-    m_page(page),
+MenuOption::MenuOption(const std::string& cap,
+                       uint8_t keyCode,
+                       MenuOptionAction action) :
     m_caption(cap),
-    m_keyCode(keyCode)
+    m_keyCode(keyCode),
+    m_action(action)
     {}
 
-MenuOptionBase::~MenuOptionBase() {
-#ifdef _DEBUG
-    std::cout << "MenuOptionBase::~MenuOptionBase\n";
-#endif // _DEBUG
-}
-
-void MenuOptionBase::show() {
+void MenuOption::show() {
     std::cout << "[" << printableKey() << "] " << m_caption << std::endl;
 }
 
-std::string MenuOptionBase::printableKey() const {
+std::string MenuOption::printableKey() const {
     std::string res(1, m_keyCode);
     switch (m_keyCode)
     {
@@ -48,35 +42,13 @@ std::string MenuOptionBase::printableKey() const {
     return res;
 }
 
-
-MenuOption::MenuOption(const FuncType func,
-                       Page* page,
-                       const std::string& cap,
-                       uint8_t keyCode) :
-    MenuOptionBase(page, cap, keyCode), m_func(func)
-    {}
-
-MenuOption::~MenuOption() {
-#ifdef _DEBUG
-    std::cout << "MenuOption::~MenuOption\n";
-#endif // _DEBUG
-}
-
 Page::Page(MainUtil* mainUtil, const std::string& caption) :
            m_mainUtil(mainUtil),
            m_caption(caption) {
-    std::shared_ptr<MenuOptionBase> exitOpt =
-        std::make_shared<MenuOption>(nullptr, this, "Выход", 'q');
-    addOption(exitOpt);
+    m_options.emplace_back("Выход", 'q', MenuOptionAction::eGoBack);
 }
 
-Page::~Page() {
-#ifdef _DEBUG
-    std::cout << "Page::~Page\n";
-#endif // _DEBUG
-}
-
-void Page::addOption(OptionPtr option) {
+void Page::addOption(const MenuOption& option) {
     m_options.push_back(option);
 }
 
@@ -93,12 +65,28 @@ void Page::run() const {
             std::cout << m_caption << std::endl;
             for (auto option : m_options) {
                 std::cout << std::endl;
-                option->show();
+                option.show();
             }
         }
+        // Потом тут надо скорректировать полученный символ
+        // чтобы исключить маленькие и русские буквы
         uint8_t cmd = _getch();
-        if (cmd == 'q') {
-            exit = true;
+        const auto it = std::find_if(m_options.cbegin(),
+                                     m_options.cend(),
+                                     [cmd](auto& opt) {
+            return (opt.m_keyCode == cmd);
+        });
+        if (it != m_options.end()) {
+            switch (it->m_action) {
+            case MenuOptionAction::eShowPage:
+                assert(false);
+                break;
+            default:
+                assert(false);
+            case MenuOptionAction::eGoBack:
+                exit = true;
+                break;
+            }
         }
     }
 }
