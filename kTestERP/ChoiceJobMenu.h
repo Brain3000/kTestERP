@@ -5,5 +5,7 @@ class ChoiceJobMenu :
 {
 public:
     ChoiceJobMenu(MainUtil* mainUtil, const std::string& unitName);
+protected:
+    void runOption(const MenuBase::Option &) const {}
 };
 

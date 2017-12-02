@@ -156,6 +156,7 @@
     <ClInclude Include="CSVReader.h" />
     <ClInclude Include="Employer.h" />
     <ClInclude Include="EmployerFactory.h" />
+    <ClInclude Include="EnumImpl.h" />
     <ClInclude Include="ERPException.h" />
     <ClInclude Include="IUnit.h" />
     <ClInclude Include="Job.h" />
