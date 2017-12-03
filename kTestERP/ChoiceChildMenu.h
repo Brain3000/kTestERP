@@ -23,7 +23,7 @@ protected:
     virtual void runOption(const MenuBase::Option& opt) {
         m_resultString = opt.m_additionalParam;
         if (opt.m_keyCode == ' ') {
-            m_initOptionNum += 10;
+            m_initOptionNum += 9;
         }
         if (m_initOptionNum >= m_scrolledOptions.size()) {
             m_initOptionNum = 0;
