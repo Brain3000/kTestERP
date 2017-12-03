@@ -47,7 +47,6 @@ void CSVReader::readFolder(const std::string& _path) {
         }
         fs::recursive_directory_iterator end_itr;
         for (fs::recursive_directory_iterator itr(path); itr != end_itr; ++itr) {
-            // If it's not a directory, list it. If you want to list directories too, just remove this check.
             if (fs::is_regular_file(itr->path()) &&
                 itr->path().extension().string() == kCSVExtension) {
 				readFile(itr->path().string(), itr->path().stem().string());
@@ -81,6 +80,10 @@ void CSVReader::readFile(const std::string& fileName,
 	while (getline(iStream, buf)) {
 		++strIdx;
 		// Надо определить индексы нужных полей (если будут)
+        // Расчет на то, что в cvs-файле названия нужных полей будут не по порядку,
+        // а в разнобой, да еще некоторых может и не быть.
+        // Индесы нам нужны, чтобы из каждой строки извлекать значение нужного столбца,
+        // если таковой столбец вообще есть.
 		if (idsMap.empty()) {
 			idsMap = getIdsMap(buf, fileName);
 			if (idsMap.empty()) {
@@ -102,8 +105,10 @@ void CSVReader::readFile(const std::string& fileName,
 			}
             continue;
 		}
+        // Имя и текстовое представление должности для сотрудника.
         const std::string name = *(std::next(tokenizer.begin(), idsMap[kNameId]));
         const std::string posAsText = *(std::next(tokenizer.begin(), idsMap[kPositionId]));
+        // Попробуем создать и добавить.
         if (addEmployer(strIdx, name, posAsText, dept.get())) {
             ++emplAdded;
         }
@@ -150,22 +155,21 @@ bool CSVReader::addEmployer(int strIdx,
 
     if (m_verbose) {
         std::cout << "Сотрудник '" << name << "' со специальностью '"
-            << posAsText << "' успешно добавлен в отдел '"
-            << dept->name() << "'\n";
+                  << posAsText << "' успешно добавлен в отдел '"
+                  << dept->name() << "'\n";
     }
     return true;
 }
 
 CSVReader::IdsMap CSVReader::getIdsMap(const std::string& firstFileLine,
-                                         const std::string& fileName) noexcept
-{
+                                       const std::string& fileName) noexcept {
 	IdsMap idsMap = s_idsMap;
     Tokenizer tokenizer(firstFileLine, m_sep);
     for (auto idIt = idsMap.begin(); idIt != idsMap.end(); ++idIt) {
         const auto tokIt = std::find(tokenizer.begin(), tokenizer.end(), idIt->first);
         if (tokIt == tokenizer.end()) {
             if (m_verbose) {
-                std::cout << "В файле '" /*<< fileName*/ << "' не "
+                std::cout << "В файле '" << fileName << "' не "
                              "обнаружен идентификатор '" << idIt->first << "'\n";
             }
 			idsMap.clear();

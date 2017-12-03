@@ -10,6 +10,9 @@
 
 using JobStrMap = std::unordered_map<Job, std::string>;
 
+// Карта в статической переменной, чтобы знать момент её создания.
+// В однопоточном приложении это не так важно, но для приличия
+// глобальные статики делать не стоит.
 const JobStrMap& get_job_str_map() {
     static const JobStrMap s_jobStrMap = {
         { Job::eProgramming, "Программировать" },
