@@ -17,7 +17,7 @@ const JobStrMap& get_job_str_map() {
         { Job::eTranslation, "Переводить" },
         { Job::eTesting,     "Тестировать" },
         { Job::ePlaningTest, "Планировать тестирование" },
-        { Job::ePaySallory,  "Пачислять зарплату" },
+        { Job::ePaySallory,  "Начислять зарплату" },
         { Job::eReporting,   "Составлять отчет" },
         { Job::eVacation,    "Идти в отпуск" },
         { Job::eCleaning,    "Убирать рабочее место" },
