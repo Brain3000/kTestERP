@@ -46,6 +46,7 @@ DepartamentPtr BaseMenu::choiceDepartament(bool onlyWithEmployers) const {
 }
 
 EmployerPtr BaseMenu::choiceEmployer(Departament* dept) const {
+    assert(dept);
     ChoiceEmployerMenu emplMenu(m_mainUtil, dept);
     emplMenu.run();
     EmployerPtr empl = emplMenu.result();

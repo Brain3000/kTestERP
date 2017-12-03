@@ -65,6 +65,7 @@ void MainUtil::doJob(Job job, IUnit* unit) {
 
     //m_report.emplace_back(msg, report);
 
+    /// Если что-то пойдет не так, то старый отчет не покоцается.
     std::swap(m_report, report);
 }
 

@@ -1,3 +1,10 @@
+/**
+\file
+\brief Загрузчик csv - файлов.
+\author Leontyev George
+\version 1.0
+\date Ноябрь 2017
+*/
 #pragma once
 
 #include <string>
@@ -13,7 +20,7 @@ namespace b = boost;
 namespace sys = b::system;
 namespace fs = b::filesystem;
 
-
+/// Загрузчик информации о компании: отделах и сотрудниках
 class CSVReader
 {
 	using IdsMap = std::map<std::string, int>;
@@ -22,10 +29,25 @@ class CSVReader
                                    std::string::const_iterator,
                                    std::string>;
 public:
+    /**
+    \brief Пытается загрузить информацию о компании.
+    \param[out] company  информация о компании, в которую надо загрузить информацию
+    \param[in] path путь начальной папки с csv-файлами.
+    \param[in] verbose флаг того, что надо выводить отладочные сообщения при загрузке.
+    \throw ERPException если путь не существует кинется исключение
+    */
     CSVReader(Company& company, const std::string& path, bool verbose);
 
 private:
+    /// Читает каталог _path, каталог читается рекурсивно.
     void readFolder(const std::string& _path);
+    /**
+    \breif Читает информацию об отделе из файла.
+    \param[in] fileName имя файла, который надо прочитать.
+    Файл должен существовать и быть доступен для чтения.
+    \param[in] deptName имя отдела, информация о котором загружается из файла.
+    \throw ERPException - если файл не существует или нет доступа для чтения.
+    */
 	void readFile(const std::string& fileName,
 				  const std::string& deptName);
 

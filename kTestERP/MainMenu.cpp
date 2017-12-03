@@ -35,9 +35,6 @@ void MainMenu::runOption(const Option& opt)
         break;
     case '5':
         reporting();
-        //m_mainUtil->showLastReport();
-        //std::cout << "Для продолжения нажмите любую клавишу\n";
-        //get_code();
         break;
     default:
         assert(!"Необработанная опция");

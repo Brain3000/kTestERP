@@ -1,3 +1,11 @@
+/**
+\file
+\brief Базовая реализация для всех структурных единиц
+и для структурных единиц с подчиненными объектами.
+\author Leontyev George
+\version 1.0
+\date Ноябрь 2017
+*/
 #pragma once
 
 #include <memory>
@@ -5,15 +13,28 @@
 
 #include "IUnit.h"
 
+/// Метод возвращает строкое представление по типу юнита.
 const std::string& kind_to_str(UnitKind kind);
 
+/**
+    \braef Базовая реализация всех юнитов.
+    Тут реализованы тривиальные методы и общие данные.
+    Метода, возвращающего m_report нет умышленно, поскольку 
+    разное поведение у юнитов, которые имеют подчиненные элементы
+    и не имеют их в случае, если работы не выполнялись вообще.
+    (Работы могут не выполнятся, поскольку никто не может сделать
+    этот тип работ или нет подчиненных элементов).
+*/
 class UnitImpl : public IUnit {
 public:
     UnitImpl(const std::string& name, UnitKind kind) : m_name(name), m_kind(kind)
     {}
+    /// Возвращает имя структурной единицы.
     virtual const std::string& name() const noexcept {
         return m_name;
     }
+
+    /// Возвращает тип структурной единицы.
     virtual UnitKind kind() const noexcept {
         return m_kind;
     }
@@ -24,6 +45,13 @@ protected:
     std::string m_report;
 };
 
+/**
+    \brief Базовая реализация для структурных подразделений, которые 
+    могут содержать в себе другие структурные подразделения.
+    U - тип подчиненного структурного подразделения
+    C - тип контейнера, в котором будут хранится подчиненные элементы
+    K - тип данного структурного подразделения
+*/
 template<typename U, typename C, UnitKind K>
 class UnitWChildrenImpl : public UnitImpl {
 public:
@@ -31,20 +59,42 @@ public:
     using Children = C;
     using Iterator = typename C::const_iterator;
 
+    /// Конструктор. Передается имя, тип берется из шаблона.
     UnitWChildrenImpl(const std::string& name);
+
+    /**
+    \brief Конечная реализация метода "ВыполнитьРаботу" для
+    структурного подразделения с подчиненными
+    \param[in] job - тип работы
+    \param[out] report - отчет о выполнении работы
+    \return в случае, если сотрудник может выполнить работу данного
+    типа - возвращает true
+    */
     virtual bool doJob(Job job, StringList& report);
+
+    /// Получить контейнер с подчиненными элементами
     const Children& getChildren() const noexcept {
         return m_children;
     }
+
+    /// Получить подчиненный элемент по итератору
+    /// *it не для всех контейнеров прокатывает.
     virtual ChildPtr child(Iterator it) const noexcept = 0;
+
+    /// Получить подчиненного по имени.
+    /// \return в случае успеха возвращает подчиненый элемент.
+    /// Иначе - пустой указатель.
     ChildPtr childByName(const std::string& name) const noexcept;
+
+    /// Возвращает отчет о работе только данного юнита.
+    /// Без информации о подчиненных.
     virtual const std::string& report() const noexcept;
 
 protected:
     Children m_children;
 
 private:
-    std::string m_emptyReport;
+    std::string m_emptyReport; ///< Пустой отчет - текст, который возвращается, если никакие работы не делались.
 };
 
 template<typename U, typename C, UnitKind K>

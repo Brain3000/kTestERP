@@ -14,13 +14,13 @@ const JobStrMap& get_job_str_map() {
     static const JobStrMap s_jobStrMap = {
         { Job::eProgramming, "Программировать" },
         { Job::eProjecting,  "Проектировать" },
-        { Job::eTranslation, "Переводить" },
+        { Job::eTranslation, "Переводить тексты" },
         { Job::eTesting,     "Тестировать" },
-        { Job::ePlaningTest, "Планировать тестирование" },
+        { Job::ePlaningTest, "Составлять тестовые планы" },
         { Job::ePaySallory,  "Начислять зарплату" },
-        { Job::eReporting,   "Составлять отчет" },
-        { Job::eVacation,    "Идти в отпуск" },
-        { Job::eCleaning,    "Убирать рабочее место" },
+        { Job::eReporting,   "Составить квартальный отчет" },
+        { Job::eVacation,    "Уйти в отпуск" },
+        { Job::eCleaning,    "Убрать рабочее место" },
     };
 #ifdef _DEBUG
     for (auto e : EnumImpl<Job>()) {

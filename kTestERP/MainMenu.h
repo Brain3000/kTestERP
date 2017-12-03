@@ -1,3 +1,10 @@
+/**
+\file
+\brief Главное меню.
+\author Leontyev George
+\version 1.0
+\date Ноябрь 2017
+*/
 #pragma once
 
 #include "BaseMenu.h"
