@@ -1,5 +1,6 @@
 #pragma once
 #include "MenuBase.h"
+#include "Company.h"
 
 class IUnit;
 
@@ -17,5 +18,8 @@ private:
     void taskToDepartament(const MenuBase::Option& opt);
     void taskToEmployer(const MenuBase::Option& opt);
     void doJob(const std::string& jobName, IUnit* unit);    
+
+    DepartamentPtr choiceDepartament(bool onlyWithEmployers) const;
+    EmployerPtr choiceEmployer(Departament* dept) const;
 };
 

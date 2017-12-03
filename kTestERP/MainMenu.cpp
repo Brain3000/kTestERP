@@ -3,7 +3,6 @@
 #include "ChoiceJobMenu.h"
 #include "ChoiceChildMenu.h"
 #include "MainUtil.h"
-#include "Company.h"
 
 using ChoiceDeptMenu = ChoiceChildMenu<Company>;
 using ChoiceEmployerMenu = ChoiceChildMenu<Departament>;
@@ -62,19 +61,7 @@ void MainMenu::taskToCompany(const MenuBase::Option & opt) {
 
 void MainMenu::taskToDepartament(const MenuBase::Option & opt)
 {
-    const Company& company = m_mainUtil->getCompany();
-
-    if (company.getChildren().empty()) {
-        std::cout << "\nВ компании '" << company.name()
-            << "' нет отделов. Нечего выбирать.\n"
-            << "Нажмите на любую клавишу для возврата в предыдущее меню.";
-        get_code();
-        return;
-    }
-
-    ChoiceDeptMenu choiceDeptMenu(m_mainUtil, &company);
-    choiceDeptMenu.run();
-    DepartamentPtr dept = choiceDeptMenu.result();
+    DepartamentPtr dept = choiceDepartament(false);
     if (!dept) {
         return;
     }
@@ -87,9 +74,6 @@ void MainMenu::taskToDepartament(const MenuBase::Option & opt)
     jobMenu.run();
     const std::string& jobName = jobMenu.resultString();
     if (jobName.empty()) {
-        //std::cout << std::endl << "Работа не выбрана. Нажмите любую "
-        //    "кнопку для возврата в главное меню\n";
-        //get_code();
         return;
     }
     doJob(jobName, dept.get());
@@ -97,36 +81,9 @@ void MainMenu::taskToDepartament(const MenuBase::Option & opt)
 
 void MainMenu::taskToEmployer(const MenuBase::Option& opt)
 {
-    const Company& company = m_mainUtil->getCompany();
-    if (company.getChildren().empty()) {
-        std::cout << "\nВ компании '" << company.name()
-            << "' нет отделов. Нечего выбирать.\n"
-            << "Нажмите на любую клавишу для возврата в предыдущее меню.";
-        get_code();
-        return;
-    }
+    DepartamentPtr dept = choiceDepartament(true);
 
-    DepartamentPtr dept;
-    while (true) {
-        ChoiceDeptMenu deptMenu(m_mainUtil, &company);
-        deptMenu.run();
-        dept = deptMenu.result();
-        if (!dept) {
-            return;
-        }
-
-        if (!dept->getChildren().empty()) {
-            break;
-        }
-        std::cout << "\nВ отделе " << " '" << dept->name()
-                  << "' нет сотрудников. Нечего выбирать.\n"
-                  << "Повторите выбор или покиньте меню\n"
-                  << "Нажмите на любую клавишу для продолжения.";
-        get_code();
-    }
-    ChoiceEmployerMenu emplMenu(m_mainUtil, dept.get());
-    emplMenu.run();
-    EmployerPtr empl = emplMenu.result();
+    EmployerPtr empl = choiceEmployer(dept.get());
     if (!empl) {
         return;
     }
@@ -152,4 +109,45 @@ void MainMenu::doJob(const std::string& jobName, IUnit* unut) {
         std::cout << "Для продолжения нажмите любую клавишу\n";
         get_code();
     }
+}
+
+DepartamentPtr MainMenu::choiceDepartament(bool onlyWithEmployers) const {
+    const Company& company = m_mainUtil->getCompany();
+
+    if (company.getChildren().empty()) {
+        std::cout << "\nВ компании '" << company.name()
+            << "' нет отделов. Нечего выбирать.\n"
+            << "Нажмите на любую клавишу для возврата в предыдущее меню.";
+        get_code();
+        return DepartamentPtr();
+    }
+
+    DepartamentPtr dept;
+    do {
+        ChoiceDeptMenu deptMenu(m_mainUtil, &company);
+        deptMenu.run();
+        dept = deptMenu.result();
+        if (!dept) {
+            return DepartamentPtr();
+        }
+
+        if (!dept->getChildren().empty()) {
+            break;
+        }
+        std::cout << "\nВ отделе " << " '" << dept->name()
+            << "' нет сотрудников. Нечего выбирать.\n"
+            << "Повторите выбор или покиньте меню\n"
+            << "Нажмите на любую клавишу для продолжения.";
+        get_code();
+    }
+    while (onlyWithEmployers);
+    return dept;
+}
+
+EmployerPtr MainMenu::choiceEmployer(Departament* dept) const {
+    ChoiceEmployerMenu emplMenu(m_mainUtil, dept);
+    emplMenu.run();
+    EmployerPtr empl = emplMenu.result();
+    return empl;
+
 }
