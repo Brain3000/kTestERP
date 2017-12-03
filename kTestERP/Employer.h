@@ -66,7 +66,7 @@ public:
 
 using Programmer = EmployerImpl<EmployerPosition::eProgrammer, Job::eProgramming, Job::eProjecting>;
 using Writer = EmployerImpl<EmployerPosition::eWriter, Job::eTranslation>;
-using Tester = EmployerImpl<EmployerPosition::eWriter, Job::eTesting, Job::ePlaningTest>;
-using Accountant = EmployerImpl<EmployerPosition::eWriter, Job::ePaySallory, Job::eReporting>;
+using Tester = EmployerImpl<EmployerPosition::eTester, Job::eTesting, Job::ePlaningTest>;
+using Accountant = EmployerImpl<EmployerPosition::eAccountant, Job::ePaySallory, Job::eReporting>;
 
 
