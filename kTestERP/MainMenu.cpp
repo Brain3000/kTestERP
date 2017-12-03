@@ -72,8 +72,13 @@ void MainMenu::taskToCompany(const MenuBase::Option & opt) {
     }
     m_mainUtil->doJob(str_to_job(resultStr), &m_mainUtil->getCompany());
     std::cout << "Приказ на выполнение работ '" << resultStr
-        << "' направлен на выполнение фирме '" << m_mainUtil->getCompany().name()
-        << "'\nДля возврата в главное меню нажмите любую кнопку."
-        << "\nВ главном меню можно просмотреть отчет.";
-    get_code();
+              << "' направлен на выполнение "
+              << "\nДля просмотра отчета нажмите 'O'."
+              << "\nДля возврата в главное меню нажмите любую кнопку.";
+    uint8_t code = get_code();
+    if (code == 'O' || code == 'Щ') {
+        m_mainUtil->showLastReport();
+        std::cout << "Для продолжения нажмите любую клавишу\n";
+        get_code();
+    }
 }

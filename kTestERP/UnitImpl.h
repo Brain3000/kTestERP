@@ -44,8 +44,10 @@ protected:
 
 template<typename U, typename C, UnitKind K>
 bool UnitWChildrenImpl<U, C, K>::doJob(Job job, StringList& report) const {
-    std::string msg = m_name;
-    msg.append(" работу ");
+    std::string msg = kind_to_str(m_kind);
+    msg.append(" '");
+    msg.append(m_name);
+    msg.append("' работу ");
     if (m_children.empty()) {
         msg.append("выполнить не может, поскольку отсутствуют подчиненные структурные единицы");
         report.push_back(msg);

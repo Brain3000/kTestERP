@@ -6,7 +6,7 @@
 #include "EnumImpl.h"
 
 ChoiceJobMenu::ChoiceJobMenu(MainUtil* mainUtil, const std::string& unitName) :
-    MenuBase(mainUtil, "¬ыберите задачу дл€ постановки " + unitName)
+    MenuBase(mainUtil, "¬ыберите задачу дл€ постановки структурной единице: " + unitName)
 {
     uint8_t initKeyCode = '1';
 

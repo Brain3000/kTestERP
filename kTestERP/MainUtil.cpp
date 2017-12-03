@@ -60,10 +60,10 @@ void MainUtil::doJob(Job job, const IUnit* unit) {
     msg.append(unit->name());
     msg.append("'\nПорученная работа: ");
     msg.append(job_to_str(job));
-    msg.append("\nРабота ");
-    if (!res)
-        msg.append("не ");
-    msg.append("выполнена");
+    //msg.append("\nРабота ");
+    //if (!res)
+    //    msg.append("не ");
+    //msg.append("выполнена");
     m_report.emplace_back(msg, report);
 }
 
