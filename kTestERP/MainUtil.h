@@ -2,7 +2,7 @@
 
 #include "CSVReader.h"
 
-uint8_t get_code();
+int get_code();
 
 class MainUtil
 {

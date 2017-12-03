@@ -9,7 +9,7 @@
 #include "MainUtil.h"
 
 MenuBase::Option::Option(const std::string& cap,
-                         uint8_t keyCode,
+                         int keyCode,
                          OptionAction action,
                          const std::string& addParam) :
     m_caption(cap),
@@ -60,23 +60,24 @@ void MenuBase::run() {
     bool exit(false);
     bool showOptions(true);
     while (!exit) {
+        const Options& opts = options();
         if (showOptions) {
             system("cls");
             std::cout << m_caption << std::endl;
-            for (auto option : m_options) {
+            for (auto option : opts) {
                 std::cout << std::endl;
                 option.show();
             }
         }
         // Потом тут надо скорректировать полученный символ
         // чтобы исключить маленькие и русские буквы
-        uint8_t cmd = get_code();
-        const auto it = std::find_if(m_options.cbegin(),
-                                     m_options.cend(),
+        int cmd = get_code();
+        const auto it = std::find_if(opts.cbegin(),
+                                     opts.cend(),
                                      [cmd](auto& opt) {
             return (opt.m_keyCode == cmd);
         });
-        if (it != m_options.end()) {
+        if (it != opts.end()) {
             exit = true;
             switch (it->m_action) {
             case OptionAction::eRunItem:

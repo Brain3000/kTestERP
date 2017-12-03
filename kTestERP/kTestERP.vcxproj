@@ -152,7 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ChoiceJobMenu.h" />
-    <ClInclude Include="ChoiceDeptMenu.h" />
+    <ClInclude Include="ChoiceChildMenu.h" />
     <ClInclude Include="Company.h" />
     <ClInclude Include="CSVReader.h" />
     <ClInclude Include="Employer.h" />

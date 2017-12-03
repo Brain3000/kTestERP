@@ -18,12 +18,12 @@ protected:
     };
 
     struct Option {
-        Option(const std::string& cap, uint8_t keyCode,
+        Option(const std::string& cap, int keyCode,
                OptionAction action, const std::string& addParam = kEmptyString);
         void show();
 
         const std::string m_caption;
-        const uint8_t m_keyCode = ' ';
+        const int m_keyCode;
         const OptionAction m_action;
         const std::string m_additionalParam;
 
@@ -51,6 +51,9 @@ public:
 protected:
     MenuBase(MainUtil* mainUtil, const std::string& caption);
     virtual void runOption(const Option& opt) = 0;
+    virtual Options options() const {
+        return m_options;
+    }
 //    void inputString(const Option& opt);
 
 protected:

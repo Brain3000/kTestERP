@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "MainMenu.h"
 #include "ChoiceJobMenu.h"
-#include "ChoiceDeptMenu.h"
+#include "ChoiceChildMenu.h"
 #include "MainUtil.h"
 #include "Company.h"
 
@@ -131,7 +131,7 @@ void MainMenu::taskToEmployer(const MenuBase::Option& opt)
         return;
     }
 
-    ChoiceJobMenu jobMenu(m_mainUtil, opt.m_additionalParam);
+    ChoiceJobMenu jobMenu(m_mainUtil, kind_to_str(empl->kind()) + " " + empl->name());
     jobMenu.run();
     const std::string& jobName = jobMenu.resultString();
     if (jobName.empty()) {
@@ -146,7 +146,7 @@ void MainMenu::doJob(const std::string& jobName, IUnit* unut) {
         << "' направлен на выполнение "
         << "\nДля просмотра отчета нажмите 'O'."
         << "\nДля возврата в главное меню нажмите любую кнопку.";
-    uint8_t code = get_code();
+    int code = get_code();
     if (code == 'O' || code == 'Щ') {
         m_mainUtil->showLastReport();
         std::cout << "Для продолжения нажмите любую клавишу\n";

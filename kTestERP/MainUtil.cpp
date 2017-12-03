@@ -11,9 +11,9 @@
 
 #include "MainMenu.h"
 
-uint8_t get_code() {
+int get_code() {
     SetConsoleCP(1251);// установка кодовой страницы win-cp 1251 в поток ввода
-    char code = _getch();
+    int code = _getch();
     SetConsoleCP(866);// установка кодовой страницы cp 866 в поток ввода
     if (code >= 'а' && code <= 'я') {
         code -= 'а' - 'А';

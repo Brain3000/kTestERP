@@ -8,7 +8,7 @@
 ChoiceJobMenu::ChoiceJobMenu(MainUtil* mainUtil, const std::string& unitName) :
     MenuBase(mainUtil, "Выберите задачу для постановки структурной единице: " + unitName)
 {
-    uint8_t initKeyCode = '1';
+    char initKeyCode = '1';
 
     for (Job e : EnumImpl<Job>())
     {
