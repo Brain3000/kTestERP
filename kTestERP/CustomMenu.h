@@ -39,10 +39,10 @@ protected:
         /// Напечатать представление пункта меню в консоли. Код клавиши будет напечатан в квадратных скобках.
         void show();                                        
 
-        const std::string m_caption;
-        const int m_keyCode;
-        const OptionAction m_action;
-        const std::string m_additionalParam;
+        const std::string m_caption;        ///< Заголовок пункта меню.
+        const int m_keyCode;                ///< Код (символ), который пользователь должен нажать, чтобы пункт меню выбрался.
+        const OptionAction m_action;        ///< Действие при выборе пункта меню.
+        const std::string m_additionalParam;///< Дополнительный параметр, может быть что угодно, используется как boost::variant
 
     private:
         /// Возвращает читаемое значение для ключа, например для ' ' возвращается слово Пробел.

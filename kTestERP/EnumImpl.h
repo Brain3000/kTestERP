@@ -1,4 +1,3 @@
-#pragma once
 /**
 \file
 \brief Код для итерирования по типизированным перечислениям
@@ -13,6 +12,7 @@ for (Job e : EnumImpl<MyEnumClass>()){
 \version 1.0
 \date Ноябрь 2017
 */
+#pragma once
 
 template< typename T>
 class EnumImpl

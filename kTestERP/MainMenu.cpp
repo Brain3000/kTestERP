@@ -85,7 +85,7 @@ void MainMenu::taskToEmployer(const CustomMenu::Option& opt)
         return;
     }
 
-    ChoiceJobMenu jobMenu(m_mainUtil, kind_to_str(empl->kind()) + " " + empl->name());
+    ChoiceJobMenu jobMenu(m_mainUtil, empl->description());
     jobMenu.run();
     const std::string& jobName = jobMenu.resultString();
     if (jobName.empty()) {

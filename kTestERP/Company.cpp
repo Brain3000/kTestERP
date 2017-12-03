@@ -3,6 +3,7 @@
 #include "Company.h"
 
 DepartamentPtr Company::getOrCreateDept(const std::string& deptName) {
+    assert(!deptName.empty());
     auto it = m_children.find(deptName);
     if (it != m_children.end())
         return it->second;
