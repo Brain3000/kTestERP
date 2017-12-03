@@ -8,7 +8,7 @@ using ChoiceDeptMenu = ChoiceChildMenu<Company>;
 using ChoiceEmployerMenu = ChoiceChildMenu<Departament>;
 
 MainMenu::MainMenu(MainUtil* mainUtil) :
-    MenuBase(mainUtil, "Главное меню")
+    CustomMenu(mainUtil, "Главное меню")
 {
     Options options = {
         {"Загрузить csv-файлы", '1', OptionAction::eRunItem},
@@ -45,7 +45,7 @@ void MainMenu::runOption(const Option& opt)
     };
 }
 
-void MainMenu::taskToCompany(const MenuBase::Option & opt) {
+void MainMenu::taskToCompany(const CustomMenu::Option & opt) {
     std::string caption = opt.m_additionalParam;
     caption.append(" '");
     caption.append(m_mainUtil->getCompany().name());
@@ -59,7 +59,7 @@ void MainMenu::taskToCompany(const MenuBase::Option & opt) {
     doJob(jobName, &m_mainUtil->getCompany());
 }
 
-void MainMenu::taskToDepartament(const MenuBase::Option & opt)
+void MainMenu::taskToDepartament(const CustomMenu::Option & opt)
 {
     DepartamentPtr dept = choiceDepartament(false);
     if (!dept) {
@@ -79,7 +79,7 @@ void MainMenu::taskToDepartament(const MenuBase::Option & opt)
     doJob(jobName, dept.get());
 }
 
-void MainMenu::taskToEmployer(const MenuBase::Option& opt)
+void MainMenu::taskToEmployer(const CustomMenu::Option& opt)
 {
     DepartamentPtr dept = choiceDepartament(true);
 

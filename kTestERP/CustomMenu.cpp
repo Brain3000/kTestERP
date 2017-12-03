@@ -5,10 +5,10 @@
 #include <assert.h>
 #include <windows.h>
 
-#include "MenuBase.h"
+#include "CustomMenu.h"
 #include "MainUtil.h"
 
-MenuBase::Option::Option(const std::string& cap,
+CustomMenu::Option::Option(const std::string& cap,
                          int keyCode,
                          OptionAction action,
                          const std::string& addParam) :
@@ -16,16 +16,13 @@ MenuBase::Option::Option(const std::string& cap,
     m_keyCode(keyCode),
     m_action(action),
     m_additionalParam(addParam) {
-    //if (action == OptionAction::eInputString) {
-    //    assert(!addParam.empty());
-    //}
 }
 
-void MenuBase::Option::show() {
+void CustomMenu::Option::show() {
     std::cout << "[" << printableKey() << "] " << m_caption << std::endl;
 }
 
-std::string MenuBase::Option::printableKey() const {
+std::string CustomMenu::Option::printableKey() const {
     std::string res(1, m_keyCode);
     switch (m_keyCode)
     {
@@ -50,13 +47,13 @@ std::string MenuBase::Option::printableKey() const {
     return res;
 }
 
-MenuBase::MenuBase(MainUtil* mainUtil, const std::string& caption) :
+CustomMenu::CustomMenu(MainUtil* mainUtil, const std::string& caption) :
     m_mainUtil(mainUtil),
     m_caption(caption) {
     m_options.emplace("Выход", 'Q', OptionAction::eExit);
 }
 
-void MenuBase::run() {
+void CustomMenu::run() {
     bool exit(false);
     bool showOptions(true);
     while (!exit) {
@@ -85,9 +82,6 @@ void MenuBase::run() {
             case OptionAction::eRunItemAndExit:
                 runOption(*it);
                 break;
-            //case OptionAction::eInputString:
-            //    inputString(*it);
-            //    break;
             default:
                 assert(!"Забыли какой-то OptionAction");
             case OptionAction::eExit:
@@ -96,10 +90,3 @@ void MenuBase::run() {
         }
     }
 }
-
-//void MenuBase::inputString(const Option& opt) {
-//    std::cout << std::endl << opt.m_additionalParam << ":";
-//    SetConsoleCP(1251);// установка кодовой страницы win-cp 1251 в поток ввода
-//    std::cin >> m_resultString;
-//    SetConsoleCP(866);// установка кодовой страницы win-cp 1251 в поток ввода
-//}

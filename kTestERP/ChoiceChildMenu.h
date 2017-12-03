@@ -2,11 +2,11 @@
 
 #include <assert.h>
 
-#include "MenuBase.h"
+#include "CustomMenu.h"
 
 template<typename T>
 class ChoiceChildMenu :
-    public MenuBase {
+    public CustomMenu {
 public:
     ChoiceChildMenu(MainUtil* mainUtil, const T* object);
     typename T::ChildPtr result() const {
@@ -20,7 +20,7 @@ public:
     }
 
 protected:
-    virtual void runOption(const MenuBase::Option& opt) {
+    virtual void runOption(const CustomMenu::Option& opt) {
         m_resultString = opt.m_additionalParam;
         if (opt.m_keyCode == ' ') {
             m_initOptionNum += 9;
@@ -29,7 +29,7 @@ protected:
             m_initOptionNum = 0;
         }
     }
-    MenuBase::Options options() const;
+    CustomMenu::Options options() const;
 
 private:
     Options m_scrolledOptions;
@@ -39,7 +39,7 @@ private:
 
 template<typename T>
 ChoiceChildMenu<T>::ChoiceChildMenu(MainUtil* mainUtil, const T* object) :
-    MenuBase(mainUtil, "Выберите структурную единицу для постановки задачи"),
+    CustomMenu(mainUtil, "Выберите структурную единицу для постановки задачи"),
     m_object(object) {
     assert(object);
     const T::Children& children(m_object->getChildren());
@@ -52,7 +52,7 @@ ChoiceChildMenu<T>::ChoiceChildMenu(MainUtil* mainUtil, const T* object) :
 }
 
 template<typename T>
-MenuBase::Options ChoiceChildMenu<T>::options() const {
+CustomMenu::Options ChoiceChildMenu<T>::options() const {
     Options optToRet;
     char initialKey = '1';
     for (Options::const_iterator it = std::next(m_scrolledOptions.begin(), m_initOptionNum);

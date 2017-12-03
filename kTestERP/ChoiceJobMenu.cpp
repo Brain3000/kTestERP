@@ -6,7 +6,7 @@
 #include "EnumImpl.h"
 
 ChoiceJobMenu::ChoiceJobMenu(MainUtil* mainUtil, const std::string& unitName) :
-    MenuBase(mainUtil, "Выберите задачу для постановки структурной единице: " + unitName)
+    CustomMenu(mainUtil, "Выберите задачу для постановки структурной единице: " + unitName)
 {
     char initKeyCode = '1';
 
@@ -17,6 +17,6 @@ ChoiceJobMenu::ChoiceJobMenu(MainUtil* mainUtil, const std::string& unitName) :
     }
 }
 
-void ChoiceJobMenu::runOption(const MenuBase::Option& opt) {
+void ChoiceJobMenu::runOption(const CustomMenu::Option& opt) {
     m_resultString = opt.m_additionalParam;
 }

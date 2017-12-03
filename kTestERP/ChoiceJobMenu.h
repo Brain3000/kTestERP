@@ -1,11 +1,13 @@
 #pragma once
-#include "MenuBase.h"
+
+#include "CustomMenu.h"
+
 class ChoiceJobMenu :
-    public MenuBase
+    public CustomMenu
 {
 public:
     ChoiceJobMenu(MainUtil* mainUtil, const std::string& unitName);
 protected:
-    virtual void runOption(const MenuBase::Option &);
+    virtual void runOption(const CustomMenu::Option &);
 };
 

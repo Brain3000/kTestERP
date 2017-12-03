@@ -8,13 +8,12 @@ class MainUtil;
 
 const std::string kEmptyString;
 
-class MenuBase {
+class CustomMenu {
 protected:
     enum class OptionAction {
         eExit,
         eRunItem,
         eRunItemAndExit,
-//        eInputString,
     };
 
     struct Option {
@@ -39,7 +38,7 @@ protected:
     };
     using Options = std::set<Option, OptionLess>;
 public:
-    virtual ~MenuBase(){}
+    virtual ~CustomMenu(){}
     void run();
     const MainUtil* mainUtil() const noexcept {
         return m_mainUtil;
@@ -49,12 +48,11 @@ public:
     }
 
 protected:
-    MenuBase(MainUtil* mainUtil, const std::string& caption);
+    CustomMenu(MainUtil* mainUtil, const std::string& caption);
     virtual void runOption(const Option& opt) = 0;
     virtual Options options() const {
         return m_options;
     }
-//    void inputString(const Option& opt);
 
 protected:
     MainUtil* m_mainUtil;

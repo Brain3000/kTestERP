@@ -162,7 +162,7 @@
     <ClInclude Include="IUnit.h" />
     <ClInclude Include="Job.h" />
     <ClInclude Include="MainUtil.h" />
-    <ClInclude Include="MenuBase.h" />
+    <ClInclude Include="CustomMenu.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Departament.h" />
@@ -178,7 +178,7 @@
     <ClCompile Include="Job.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainUtil.cpp" />
-    <ClCompile Include="MenuBase.cpp" />
+    <ClCompile Include="CustomMenu.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
