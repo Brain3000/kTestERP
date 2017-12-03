@@ -5,6 +5,9 @@
 #include "MainUtil.h"
 #include "Company.h"
 
+using ChoiceDeptMenu = ChoiceChildMenu<Company>;
+using ChoiceEmployerMenu = ChoiceChildMenu<Departament>;
+
 MainMenu::MainMenu(MainUtil* mainUtil) :
     MenuBase(mainUtil, "Главное меню")
 {
@@ -28,23 +31,10 @@ void MainMenu::runOption(const Option& opt)
         taskToCompany(opt);
         break;
     case '3':
-        {
-            ChoiceDeptMenu choiceDeptMenu(m_mainUtil, m_mainUtil->getCompany().name());
-            choiceDeptMenu.run();
-    
-            std::string caption = opt.m_additionalParam;
-            caption.append(" '");
-            caption.append(m_mainUtil->getCompany().name());
-            caption.append("'");
-            ChoiceJobMenu choiceMenu(m_mainUtil, opt.m_additionalParam);
-            choiceMenu.run();
-        }
+        taskToDepartament(opt);
         break;
     case '4':
-        {
-            ChoiceJobMenu choiceMenu(m_mainUtil, opt.m_additionalParam);
-            choiceMenu.run();
-        }
+        taskToEmployer(opt);
         break;
     case '5':
         m_mainUtil->showLastReport();
@@ -61,20 +51,107 @@ void MainMenu::taskToCompany(const MenuBase::Option & opt) {
     caption.append(" '");
     caption.append(m_mainUtil->getCompany().name());
     caption.append("'");
-    ChoiceJobMenu choiceMenu(m_mainUtil, caption);
-    choiceMenu.run();
-    const std::string& resultStr = choiceMenu.resultString();
-    if (resultStr.empty()) {
-        std::cout << std::endl << "Работа не выбрана. Нажмите любую "
-            "кнопку для возврата в главное меню\n";
-        get_code();
+    ChoiceJobMenu jobMenu(m_mainUtil, caption);
+    jobMenu.run();
+    const std::string& jobName = jobMenu.resultString();
+    if (jobName.empty()) {
+        //std::cout << std::endl << "Работа не выбрана. Нажмите любую "
+        //    "кнопку для возврата в главное меню\n";
+        //get_code();
         return;
     }
-    m_mainUtil->doJob(str_to_job(resultStr), &m_mainUtil->getCompany());
-    std::cout << "Приказ на выполнение работ '" << resultStr
+    m_mainUtil->doJob(str_to_job(jobName), &m_mainUtil->getCompany());
+    std::cout << "Приказ на выполнение работ '" << jobName
               << "' направлен на выполнение "
               << "\nДля просмотра отчета нажмите 'O'."
               << "\nДля возврата в главное меню нажмите любую кнопку.";
+    uint8_t code = get_code();
+    if (code == 'O' || code == 'Щ') {
+        m_mainUtil->showLastReport();
+        std::cout << "Для продолжения нажмите любую клавишу\n";
+        get_code();
+    }
+}
+
+void MainMenu::taskToDepartament(const MenuBase::Option & opt)
+{
+    const Company& company = m_mainUtil->getCompany();
+
+    if (company.getChildren().empty()) {
+        std::cout << "\nВ компании " << " '" << company.name()
+            << "' нет отделов. Нечего выбирать.\n"
+            << "Нажмите на любую клавишу для возврата в предыдущее меню.";
+    }
+
+    ChoiceDeptMenu choiceDeptMenu(m_mainUtil, &company);
+    choiceDeptMenu.run();
+    DepartamentPtr dept = choiceDeptMenu.result();
+    if (!dept) {
+        return;
+    }
+
+    std::string caption = opt.m_additionalParam;
+    caption.append(" '");
+    caption.append(dept->name());
+    caption.append("'");
+    ChoiceJobMenu jobMenu(m_mainUtil, caption);
+    jobMenu.run();
+    const std::string& jobName = jobMenu.resultString();
+    if (jobName.empty()) {
+        //std::cout << std::endl << "Работа не выбрана. Нажмите любую "
+        //    "кнопку для возврата в главное меню\n";
+        //get_code();
+        return;
+    }
+    m_mainUtil->doJob(str_to_job(jobName), dept.get());
+    std::cout << "Приказ на выполнение работ '" << jobName
+        << "' направлен на выполнение "
+        << "\nДля просмотра отчета нажмите 'O'."
+        << "\nДля возврата в главное меню нажмите любую кнопку.";
+    uint8_t code = get_code();
+    if (code == 'O' || code == 'Щ') {
+        m_mainUtil->showLastReport();
+        std::cout << "Для продолжения нажмите любую клавишу\n";
+        get_code();
+    }
+}
+
+void MainMenu::taskToEmployer(const MenuBase::Option& opt)
+{
+    const Company& company = m_mainUtil->getCompany();
+    DepartamentPtr dept;
+    while (true) {
+        ChoiceDeptMenu deptMenu(m_mainUtil, &company);
+        deptMenu.run();
+        dept = deptMenu.result();
+        if (!dept) {
+            return;
+        }
+
+        if (!dept->getChildren().empty()) {
+            break;
+        }
+        std::cout << "\nВ отделе " << " '" << dept->name()
+                  << "' нет сотрудников. Нечего выбирать.\n"
+                  << "Повторите выбор или покиньте меню\n"
+                  << "Нажмите на любую клавишу для продолжения.";
+        get_code();
+    }
+    ChoiceEmployerMenu emplMenu(m_mainUtil, dept.get());
+    emplMenu.run();
+    EmployerPtr empl = emplMenu.result();
+
+    ChoiceJobMenu jobMenu(m_mainUtil, opt.m_additionalParam);
+    jobMenu.run();
+    const std::string& jobName = jobMenu.resultString();
+    if (jobName.empty()) {
+        return;
+    }
+    m_mainUtil->doJob(str_to_job(jobName), empl.get());
+    std::cout << "Приказ на выполнение работ '" << jobName
+        << "' направлен на выполнение "
+        << "\nДля просмотра отчета нажмите 'O'."
+        << "\nДля возврата в главное меню нажмите любую кнопку.";
     uint8_t code = get_code();
     if (code == 'O' || code == 'Щ') {
         m_mainUtil->showLastReport();

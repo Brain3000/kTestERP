@@ -16,9 +16,9 @@ MenuBase::Option::Option(const std::string& cap,
     m_keyCode(keyCode),
     m_action(action),
     m_additionalParam(addParam) {
-    if (action == OptionAction::eInputString) {
-        assert(!addParam.empty());
-    }
+    //if (action == OptionAction::eInputString) {
+    //    assert(!addParam.empty());
+    //}
 }
 
 void MenuBase::Option::show() {
@@ -84,9 +84,9 @@ void MenuBase::run() {
             case OptionAction::eRunItemAndExit:
                 runOption(*it);
                 break;
-            case OptionAction::eInputString:
-                inputString(*it);
-                break;
+            //case OptionAction::eInputString:
+            //    inputString(*it);
+            //    break;
             default:
                 assert(!"Забыли какой-то OptionAction");
             case OptionAction::eExit:
@@ -96,9 +96,9 @@ void MenuBase::run() {
     }
 }
 
-void MenuBase::inputString(const Option& opt) {
-    std::cout << std::endl << opt.m_additionalParam << ":";
-    SetConsoleCP(1251);// установка кодовой страницы win-cp 1251 в поток ввода
-    std::cin >> m_resultString;
-    SetConsoleCP(866);// установка кодовой страницы win-cp 1251 в поток ввода
-}
+//void MenuBase::inputString(const Option& opt) {
+//    std::cout << std::endl << opt.m_additionalParam << ":";
+//    SetConsoleCP(1251);// установка кодовой страницы win-cp 1251 в поток ввода
+//    std::cin >> m_resultString;
+//    SetConsoleCP(866);// установка кодовой страницы win-cp 1251 в поток ввода
+//}

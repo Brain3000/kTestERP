@@ -14,7 +14,7 @@ protected:
         eExit,
         eRunItem,
         eRunItemAndExit,
-        eInputString,
+//        eInputString,
     };
 
     struct Option {
@@ -50,9 +50,8 @@ public:
 
 protected:
     MenuBase(MainUtil* mainUtil, const std::string& caption);
-    //void addOption(const MenuOption& option);
     virtual void runOption(const Option& opt) = 0;
-    void inputString(const Option& opt);
+//    void inputString(const Option& opt);
 
 protected:
     MainUtil* m_mainUtil;

@@ -171,7 +171,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChoiceJobMenu.cpp" />
-    <ClCompile Include="ChoiceDeptMenu.cpp" />
     <ClCompile Include="Company.cpp" />
     <ClCompile Include="CSVReader.cpp" />
     <ClCompile Include="Employer.cpp" />

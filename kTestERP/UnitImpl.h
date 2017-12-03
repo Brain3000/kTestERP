@@ -32,10 +32,11 @@ public:
     UnitWChildrenImpl(const std::string& name) :
         UnitImpl(name, K) {}
     virtual bool doJob(Job job, StringList& report) const;
-    virtual ChildPtr child(Iterator it) const noexcept = 0;
     const Children& getChildren() const noexcept {
         return m_children;
     }
+    virtual ChildPtr child(Iterator it) const noexcept = 0;
+    ChildPtr childByName(const std::string& name) const noexcept;
 
 protected:
     Children m_children;
@@ -63,4 +64,18 @@ bool UnitWChildrenImpl<U, C, K>::doJob(Job job, StringList& report) const {
     msg.append(jobResult ? "выполнил(а)" : "выполнить не может");
     report.push_back(msg);
     return jobResult;
+}
+
+template<typename U, typename C, UnitKind K>
+typename UnitWChildrenImpl<U, C, K>::ChildPtr
+UnitWChildrenImpl<U, C, K>::childByName(const std::string& name) const noexcept {
+    ChildPtr res;
+    for (auto it = m_children.cbegin(); it != m_children.end(); ++it) {
+        ChildPtr tmp = child(it);
+        if (tmp->name() == name) {
+            std::swap(res, tmp);
+            break;
+        }
+    }
+    return res;
 }
