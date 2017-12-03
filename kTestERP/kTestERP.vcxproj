@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BaseMenu.h" />
     <ClInclude Include="ChoiceJobMenu.h" />
     <ClInclude Include="ChoiceChildMenu.h" />
     <ClInclude Include="Company.h" />
@@ -170,6 +171,7 @@
     <ClInclude Include="UnitImpl.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BaseMenu.cpp" />
     <ClCompile Include="ChoiceJobMenu.cpp" />
     <ClCompile Include="Company.cpp" />
     <ClCompile Include="CSVReader.cpp" />
