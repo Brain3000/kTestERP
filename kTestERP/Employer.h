@@ -38,16 +38,17 @@ public:
 // IUnit
 public:
     virtual bool doJob(Job job, StringList& report);
+    virtual const std::string& report() const noexcept;
 
 public:
-    Employer(const std::string& name, EmployerPosition position) :
-        UnitImpl(name, UnitKind::eEmployer), m_position(position) {}
+    Employer(const std::string& name, EmployerPosition position);
 
 protected:
     Jobs m_jobs;
 
 private:
     EmployerPosition m_position;
+    std::string m_emptyReport;
 };
 
 using EmployerPtr = std::shared_ptr<Employer>;

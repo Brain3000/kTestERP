@@ -2,6 +2,8 @@
 #include "MainMenu.h"
 #include "MainUtil.h"
 #include "ChoiceJobMenu.h"
+#include "ReportMenu.h"
+
 
 MainMenu::MainMenu(MainUtil* mainUtil) :
     BaseMenu(mainUtil, "Главное меню")
@@ -11,7 +13,7 @@ MainMenu::MainMenu(MainUtil* mainUtil) :
         {"Поставить задачу всей фирме", '2', OptionAction::eRunItem, kind_to_str(UnitKind::eCompany)},
         {"Поставить задачу отделу", '3', OptionAction::eRunItem, kind_to_str(UnitKind::eDepartament) },
         {"Поставить задачу сотруднику", '4', OptionAction::eRunItem, kind_to_str(UnitKind::eEmployer) },
-        {"Посмотреть последний отчет", '5', OptionAction::eRunItem},
+        {"Просмотр отчетов", '5', OptionAction::eRunItem},
     };
     m_options.insert(options.begin(), options.end());
 }
@@ -32,9 +34,10 @@ void MainMenu::runOption(const Option& opt)
         taskToEmployer(opt);
         break;
     case '5':
-        m_mainUtil->showLastReport();
-        std::cout << "Для продолжения нажмите любую клавишу\n";
-        get_code();
+        reporting();
+        //m_mainUtil->showLastReport();
+        //std::cout << "Для продолжения нажмите любую клавишу\n";
+        //get_code();
         break;
     default:
         assert(!"Необработанная опция");
@@ -93,6 +96,13 @@ void MainMenu::taskToEmployer(const CustomMenu::Option& opt)
     }
     doJob(jobName, empl.get());
 }
+
+void MainMenu::reporting() {
+    ReportMenu reportMenu(m_mainUtil,
+                          "Просмотр отчетам по структурным единицам и сотрудникам");
+    reportMenu.run();
+}
+
 
 void MainMenu::doJob(const std::string& jobName, IUnit* unut) {
     m_mainUtil->doJob(str_to_job(jobName), unut);

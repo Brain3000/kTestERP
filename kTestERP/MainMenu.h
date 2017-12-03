@@ -10,13 +10,13 @@ class MainMenu :
 public:
     MainMenu(MainUtil* mainUtil);
 
-protected:
+private:
     virtual void runOption(const Option& opt);
 
-private:
     void taskToCompany(const CustomMenu::Option& opt);
     void taskToDepartament(const CustomMenu::Option& opt);
     void taskToEmployer(const CustomMenu::Option& opt);
+    void reporting();
     void doJob(const std::string& jobName, IUnit* unit);    
 };
 

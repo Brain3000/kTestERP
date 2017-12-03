@@ -43,6 +43,16 @@ EmployerPosition str_to_pos(const std::string& posAsStr) {
 }
 
 
+Employer::Employer(const std::string& name, EmployerPosition position) :
+    UnitImpl(name, UnitKind::eEmployer),
+    m_position(position),
+    m_emptyReport("Сотрудник '" + name + "' работ не выполнял"){
+}
+
+const std::string& Employer::report() const noexcept{
+    return (m_report.empty() ? m_emptyReport : m_report);
+}
+
 bool Employer::doJob(Job job, StringList& report) {
     using ReverseEmplPosMap = std::unordered_map<EmployerPosition, std::string>;
 

@@ -17,9 +17,6 @@ public:
     virtual UnitKind kind() const noexcept {
         return m_kind;
     }
-    virtual const std::string& report() const noexcept {
-        return m_report;
-    }
 
 protected:
     std::string m_name;
@@ -34,26 +31,39 @@ public:
     using Children = C;
     using Iterator = typename C::const_iterator;
 
-    UnitWChildrenImpl(const std::string& name) :
-        UnitImpl(name, K) {}
+    UnitWChildrenImpl(const std::string& name);
     virtual bool doJob(Job job, StringList& report);
     const Children& getChildren() const noexcept {
         return m_children;
     }
     virtual ChildPtr child(Iterator it) const noexcept = 0;
     ChildPtr childByName(const std::string& name) const noexcept;
+    virtual const std::string& report() const noexcept;
 
 protected:
     Children m_children;
+
+private:
+    std::string m_emptyReport;
 };
+
+template<typename U, typename C, UnitKind K>
+UnitWChildrenImpl<U, C, K>::UnitWChildrenImpl(const std::string& name) :
+    UnitImpl(name, K),
+    m_emptyReport("Структурное подразделение " + kind_to_str(K) + " '" + name + "' работ невыполняло.") {
+}
+
 
 
 template<typename U, typename C, UnitKind K>
 bool UnitWChildrenImpl<U, C, K>::doJob(Job job, StringList& report) {
     std::string msg("Работу '");
     msg.append(job_to_str(job));
-    msg.append("' структурное подразделение '");
+    msg.append("' структурное подразделение ");
+    msg.append(kind_to_str(kind()));
+    msg.append(" '");
     msg.append(m_name);
+    msg.append("'");
     if (m_children.empty()) {
         msg.append("' выполнить не может, поскольку отсутствуют подчиненные структурные единицы.");
         report.push_back(msg);
@@ -87,4 +97,9 @@ UnitWChildrenImpl<U, C, K>::childByName(const std::string& name) const noexcept 
         }
     }
     return res;
+}
+
+template<typename U, typename C, UnitKind K>
+const std::string& UnitWChildrenImpl<U, C, K>::report() const noexcept{
+    return (m_report.empty() ? m_emptyReport : m_report);
 }
