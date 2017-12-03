@@ -80,7 +80,6 @@ void CSVReader::readFile(const std::string& fileName,
     
 	while (getline(iStream, buf)) {
 		++strIdx;
-        //std::string buf = converter.to_bytes(wbuf);
 		// Ќадо определить индексы нужных полей (если будут)
 		if (idsMap.empty()) {
 			idsMap = getIdsMap(buf, fileName);
