@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <algorithm>
 
 #include "IUnit.h"
 
@@ -16,10 +17,14 @@ public:
     virtual UnitKind kind() const noexcept {
         return m_kind;
     }
+    virtual const std::string& report() const noexcept {
+        return m_report;
+    }
 
 protected:
     std::string m_name;
     UnitKind m_kind;
+    std::string m_report;
 };
 
 template<typename U, typename C, UnitKind K>
@@ -31,7 +36,7 @@ public:
 
     UnitWChildrenImpl(const std::string& name) :
         UnitImpl(name, K) {}
-    virtual bool doJob(Job job, StringList& report) const;
+    virtual bool doJob(Job job, StringList& report);
     const Children& getChildren() const noexcept {
         return m_children;
     }
@@ -44,25 +49,29 @@ protected:
 
 
 template<typename U, typename C, UnitKind K>
-bool UnitWChildrenImpl<U, C, K>::doJob(Job job, StringList& report) const {
-    std::string msg = kind_to_str(m_kind);
-    msg.append(" '");
+bool UnitWChildrenImpl<U, C, K>::doJob(Job job, StringList& report) {
+    std::string msg("Работу '");
+    msg.append(job_to_str(job));
+    msg.append("' структурное подразделение '");
     msg.append(m_name);
-    msg.append("' работу ");
     if (m_children.empty()) {
-        msg.append("выполнить не может, поскольку отсутствуют подчиненные структурные единицы");
+        msg.append("' выполнить не может, поскольку отсутствуют подчиненные структурные единицы.");
         report.push_back(msg);
         return false;
     }
 
+    StringList internalReport;
     bool jobResult(false);
     for (auto it = m_children.begin(); it != m_children.end(); ++it) {
-        if (child(it)->doJob(job, report) && !jobResult) {
+        if (child(it)->doJob(job, internalReport) && !jobResult) {
             jobResult = true;
         }
     }
-    msg.append(jobResult ? "выполнил(а)" : "выполнить не может");
+    msg.append(jobResult ? "' выполнил(а)." : "' выполнить не может.");
     report.push_back(msg);
+    std::swap(msg, m_report);
+    std::transform(internalReport.begin(), internalReport.end(), std::back_inserter(report),
+        [](std::string s) { s.insert(s.begin(), 4, ' '); return s; });
     return jobResult;
 }
 

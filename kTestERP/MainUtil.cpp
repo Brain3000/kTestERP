@@ -43,7 +43,7 @@ void MainUtil::run() {
     mainMenu.run();
 }
 
-void MainUtil::doJob(Job job, const IUnit* unit) {
+void MainUtil::doJob(Job job, IUnit* unit) {
     StringList report;
     bool res = unit->doJob(job, report);
     //std::time_t t = std::time(nullptr);
@@ -54,28 +54,27 @@ void MainUtil::doJob(Job job, const IUnit* unit) {
     //std::string msg = buffer.str();
     // Тут должен стоять "сотрудник/отдел/фирма"
     //assert(!"Тут должно быть дата/время строкой");
-    std::string msg = "Отчет о выполнении работы от структурной единицы: ";
-    msg.append(kind_to_str(unit->kind()));
-    msg.append(" '");
-    msg.append(unit->name());
-    msg.append("'\nПорученная работа: ");
-    msg.append(job_to_str(job));
-    //msg.append("\nРабота ");
-    //if (!res)
-    //    msg.append("не ");
-    //msg.append("выполнена");
-    m_report.emplace_back(msg, report);
+
+    //std::string msg = "Отчет о выполнении работы от структурной единицы: ";
+    //msg.append(kind_to_str(unit->kind()));
+    //msg.append(" '");
+    //msg.append(unit->name());
+    //msg.append("'\nПорученная работа: ");
+    //msg.append(job_to_str(job));
+
+
+    //m_report.emplace_back(msg, report);
+
+    std::swap(m_report, report);
 }
 
-void MainUtil::showLastReport() const {
+void MainUtil::showLastReport() const noexcept{
     system("cls");
     if (m_report.empty()) {
         std::cout << "Отчетов нет\n";
     }
     else {
-        std::cout << m_report.back().first << std::endl;
-        const StringList& lst = m_report.back().second;
-        for (auto s : lst) {
+        for (auto s : m_report) {
             std::cout << s << std::endl;
         }
     }

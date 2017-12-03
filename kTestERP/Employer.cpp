@@ -12,8 +12,8 @@ using StrPosMap = std::unordered_map<std::string, EmployerPosition>;
 const PosStrMap& get_job_str_map() {
     static const PosStrMap s_posStrMap = {
         { EmployerPosition::eProgrammer, "Разработчик" },
-        { EmployerPosition::eWriter, "Писатель", },
-        { EmployerPosition::eTester, "Тестер" },
+        { EmployerPosition::eWriter, "Технический писатель", },
+        { EmployerPosition::eTester, "Специалист тестирования" },
         { EmployerPosition::eAccountant, "Бухгалтер" },
     };
 #ifdef _DEBUG
@@ -43,7 +43,7 @@ EmployerPosition str_to_pos(const std::string& posAsStr) {
 }
 
 
-bool Employer::doJob(Job job, StringList& report) const {
+bool Employer::doJob(Job job, StringList& report) {
     using ReverseEmplPosMap = std::unordered_map<EmployerPosition, std::string>;
 
     bool jobResult = m_jobs.find(job) != m_jobs.end();
@@ -56,5 +56,6 @@ bool Employer::doJob(Job job, StringList& report) const {
     msg.append("' ");
     msg.append(jobResult ? "выполнил(а)" : "не может выполнить");
     report.emplace_back(msg);
+    std::swap(m_report, msg);
     return jobResult;
 }
