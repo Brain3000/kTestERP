@@ -46,7 +46,7 @@ ChoiceChildMenu<T>::ChoiceChildMenu(MainUtil* mainUtil, const T* object) :
     assert(!children.empty());
     int initKeyCode = '1';
     for (auto it = children.begin(); it != children.end(); ++it) {
-        m_scrolledOptions.emplace(m_object->child(it)->name(), initKeyCode++, OptionAction::eRunItemAndExit, m_object->child(it)->name());
+        m_scrolledOptions.emplace(m_object->child(it)->description(), initKeyCode++, OptionAction::eRunItemAndExit, m_object->child(it)->name());
     }
     //m_options.emplace("¬вести название раздела вручную", '0', OptionAction::eInputString, "¬ведите название раздела");
 }

@@ -18,3 +18,7 @@ bool Departament::addEmployer(EmployerPtr employer) {
 EmployerPtr Departament::child(Employers::const_iterator it) const noexcept {
     return *it;
 }
+
+std::string Departament::description() const {
+    return name();
+}

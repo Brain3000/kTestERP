@@ -42,12 +42,20 @@ EmployerPosition str_to_pos(const std::string& posAsStr) {
     return s_strPosMap.at(posAsStr);
 }
 
-
 Employer::Employer(const std::string& name, EmployerPosition position) :
     UnitImpl(name, UnitKind::eEmployer),
     m_position(position),
     m_emptyReport("Сотрудник '" + name + "' работ не выполнял"){
 }
+
+std::string Employer::description() const {
+    std::string res(m_name);
+    res.append(" (");
+    res.append(pos_to_str(m_position));
+    res.append(")");
+    return res;
+}
+
 
 const std::string& Employer::report() const noexcept{
     return (m_report.empty() ? m_emptyReport : m_report);

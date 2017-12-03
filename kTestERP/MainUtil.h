@@ -50,7 +50,7 @@ public:
     /// Вывести полный отчет по фирме.
     void showLastReport() const noexcept;
 
-private:
+    /// Загрузить данные из папки m_csvFolder.
     void loadDataFromDir();
 
 private:

@@ -45,7 +45,7 @@ public:
     /// сотрудник (на данной должности)
     virtual const Jobs& jobs() const noexcept
         { return m_jobs; }
-
+    std::string description() const;
 // IUnit
 public:
     /**

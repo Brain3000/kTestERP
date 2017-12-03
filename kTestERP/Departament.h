@@ -20,4 +20,5 @@ public:
         UnitWChildrenImpl(name){}
     bool addEmployer(EmployerPtr employer);
     virtual EmployerPtr child(Employers::const_iterator it) const noexcept;
+    std::string description() const;
 };
