@@ -45,11 +45,13 @@ public:
 };
 
 template<typename T>
-typename EnumImpl<T>::Iterator begin(EnumImpl<T>) {
+//typename EnumImpl<T>::Iterator begin(EnumImpl<T>) {
+auto begin(EnumImpl<T>) {
     return typename EnumImpl<T>::Iterator(EnumImpl<T>::InternalType(T::eFirst));
 }
 
 template<typename T>
-typename EnumImpl<T>::Iterator end(EnumImpl<T>) {
+//typename EnumImpl<T>::Iterator end(EnumImpl<T>) {
+auto end(EnumImpl<T>) {
     return typename EnumImpl<T>::Iterator(EnumImpl<T>::InternalType(T::eLast) + 1);
 }
